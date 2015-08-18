@@ -10,6 +10,9 @@ class Question(models.Model):
     kind = models.CharField(max_length=255)
     survey = models.ForeignKey(Survey)
 
+    def __str__(self):
+        return str(self.id)
+
 
 class QuestionResponse(models.Model):
     response = models.CharField(max_length=255)
