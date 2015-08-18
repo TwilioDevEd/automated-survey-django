@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from views.surveys import redirect_to_first_survey
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^first_survey/', redirect_to_first_survey, name='first-survey')
 ]
