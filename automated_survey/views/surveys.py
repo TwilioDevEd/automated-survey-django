@@ -1,4 +1,4 @@
-from automated_survey.models import Survey, Question
+from automated_survey.models import Survey, Question, QuestionResponse
 from django.http import HttpResponse
 from django.views.generic import View
 from django.core.urlresolvers import reverse
@@ -32,15 +32,11 @@ class QuestionView(View):
 
     def get(self, request, survey_id, question_id):
         question = Question.objects.get(id=question_id)
-        next_question_parameters = {
-            'survey_id': question.survey.id,
-            'question_id': question.id
-        }
 
-        question_store_url = reverse(
-            'record-response',
-            kwargs=next_question_parameters
-        )
+        url_parameters = parameters_for_survey_url(question.survey.id,
+                                                   question.id)
+
+        question_store_url = reverse('record-response', kwargs=url_parameters)
 
         voice_response = twiml.Response()
         voice_response.say(instructions[question.kind])
@@ -55,16 +51,47 @@ class QuestionView(View):
 class QuestionResponseView(View):
     http_method_names = ['post']
 
-    def post(self):
-        pass
+    def post(self, request, survey_id, question_id):
+        question_kind = request.GET.get('Kind')
+        if question_kind not in ['yes-no', 'numerical', 'voice']:
+            raise NoSuchQuestionKindException
 
-    def _next_question(self, question_id, survey_id):
+        new_response = self._question_response_from_request(request)
+        new_response.save()
+
+        return self._redirect_for_next_question(survey_id, question_id)
+
+    def _question_response_from_request(self, request):
+        question_kind = request.GET.get('Kind')
+        (call_sid, phone_number) = (request.POST['CallSid'],
+                                    request.POST['From'])
+
+        new_response = QuestionResponse(call_sid=call_sid, phone_number=phone_number)
+        new_response.response = self._question_response_content(request, question_kind)
+
+        return new_response
+
+    def _redirect_for_next_question(self, survey_id, question_id):
+        url_parameters = parameters_for_survey_url(survey_id, question_id)
+        next_question_url = reverse('question', kwargs=url_parameters)
+
+        return redirect(next_question_url)
+
+    def _next_question(self, survey_id, question_id):
         survey = Survey.objects.get(id=survey_id)
 
         questions = survey.question_set.order_by('id')
         next_questions = filter(lambda q: q.id > int(question_id), questions)
 
         return next_questions[0]
+
+    def _question_response_content(self, request, question_kind):
+        if question_kind in ['yes-no', 'numeric']:
+            return request.POST['Digits']
+        elif question_kind == 'voice':
+            return request.POST['RecordingUrl']
+        else:
+            raise NoSuchQuestionKindException
 
 
 instructions = {
@@ -87,12 +114,25 @@ def attach_command_to_response(response, kind, action):
     return response
 
 
+def parameters_for_survey_url(survey_id, question_id):
+    args = {
+        'survey_id': survey_id,
+        'question_id': question_id
+    }
+
+    return args
+
+
 def redirect_to_first_survey(request):
     first_survey = Survey.objects.first()
     first_survey_url = reverse('survey', kwargs={'survey_id': first_survey.id})
 
-    return redirect(first_survey_url, permanent=False)
+    return redirect(first_survey_url)
 
 
 class NoSuchVerbException(Exception):
+    pass
+
+
+class NoSuchQuestionKindException(Exception):
     pass

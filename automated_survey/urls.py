@@ -17,6 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from views.surveys import redirect_to_first_survey
 from views.surveys import SurveyView, QuestionView, QuestionResponseView
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -34,6 +35,6 @@ urlpatterns = [
         name='first-survey'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)/question_response$',
-        QuestionResponseView.as_view(),
+        csrf_exempt(QuestionResponseView.as_view()),
         name='record-response')
 ]
