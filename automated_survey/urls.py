@@ -31,7 +31,7 @@ urlpatterns = [
         name='survey'),
 
     url(r'^first_survey/',
-        redirect_to_first_survey,
+        csrf_exempt(redirect_to_first_survey),
         name='first-survey'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)/question_response$',

@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import View
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
 from twilio import twiml
 
 
@@ -21,8 +22,8 @@ class SurveyView(View):
         first_question_url = reverse('question', kwargs=first_question_ids)
         voice_response = twiml.Response()
 
-        voice_response.say('Hello and welcome for taking the %s survey' % survey.title)
-        voice_response.redirect(first_question_url)
+        voice_response.say('Hello and thank you for taking the %s survey' % survey.title)
+        voice_response.redirect(first_question_url, method='GET')
 
         return HttpResponse(voice_response, content_type='application/xml')
 
@@ -39,8 +40,8 @@ class QuestionView(View):
         question_store_url = reverse('record-response', kwargs=url_parameters)
 
         voice_response = twiml.Response()
-        voice_response.say(instructions[question.kind])
         voice_response.say(question.body)
+        voice_response.say(instructions[question.kind])
         voice_response = attach_command_to_response(
             voice_response, question.kind, question_store_url
         )
@@ -53,10 +54,11 @@ class QuestionResponseView(View):
 
     def post(self, request, survey_id, question_id):
         question_kind = request.GET.get('Kind')
-        if question_kind not in ['yes-no', 'numerical', 'voice']:
+        if question_kind not in ['yes-no', 'numeric', 'voice']:
             raise NoSuchQuestionKindException
 
         new_response = self._question_response_from_request(request)
+        new_response.question_id = question_id
         new_response.save()
 
         return self._redirect_for_next_question(survey_id, question_id)
@@ -72,12 +74,19 @@ class QuestionResponseView(View):
         return new_response
 
     def _redirect_for_next_question(self, survey_id, question_id):
-        next_question = self._next_question(survey_id, question_id)
+        try:
+            next_question = self._next_question(survey_id, question_id)
+        except IndexError:
+            return self._goodbye_message()
 
         url_parameters = parameters_for_survey_url(next_question.survey_id, next_question.id)
         next_question_url = reverse('question', kwargs=url_parameters)
 
-        return redirect(next_question_url)
+        see_other = redirect(next_question_url)
+        see_other.status_code = 303
+        see_other.reason_phrase = 'See Other'
+
+        return see_other
 
     def _next_question(self, survey_id, question_id):
         survey = Survey.objects.get(id=survey_id)
@@ -95,6 +104,21 @@ class QuestionResponseView(View):
         else:
             raise NoSuchQuestionKindException
 
+    def _goodbye_message(self):
+        voice_response = twiml.Response()
+        voice_response.say('That was the last question')
+        voice_response.say('Thank you for taking this survey')
+        voice_response.say('Good-bye')
+        voice_response.hangup()
+
+        return HttpResponse(voice_response)
+
+@require_POST
+def redirect_to_first_survey(request):
+    first_survey = Survey.objects.first()
+    first_survey_url = reverse('survey', kwargs={'survey_id': first_survey.id})
+
+    return redirect(first_survey_url)
 
 instructions = {
     'voice': 'Please record your answer after the beep and then hit the pound sign',
@@ -123,13 +147,6 @@ def parameters_for_survey_url(survey_id, question_id):
     }
 
     return args
-
-
-def redirect_to_first_survey(request):
-    first_survey = Survey.objects.first()
-    first_survey_url = reverse('survey', kwargs={'survey_id': first_survey.id})
-
-    return redirect(first_survey_url)
 
 
 class NoSuchVerbException(Exception):
