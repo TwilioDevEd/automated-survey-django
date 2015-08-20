@@ -1,5 +1,5 @@
 from automated_survey.models import Survey, Question, QuestionResponse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
@@ -118,7 +118,7 @@ def redirect_to_first_survey(request):
     first_survey = Survey.objects.first()
     first_survey_url = reverse('survey', kwargs={'survey_id': first_survey.id})
 
-    return redirect(first_survey_url)
+    return HttpResponseRedirect(first_survey_url)
 
 instructions = {
     'voice': 'Please record your answer after the beep and then hit the pound sign',
