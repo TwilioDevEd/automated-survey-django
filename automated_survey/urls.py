@@ -16,11 +16,24 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from views.surveys import redirect_to_first_survey
-from views.surveys import SurveyView, QuestionView
+from views.surveys import SurveyView, QuestionView, QuestionResponseView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)', QuestionView.as_view(), name='survey'),
-    url(r'^survey/(?P<survey_id>\d+)', SurveyView.as_view(), name='survey'),
-    url(r'^first_survey/', redirect_to_first_survey, name='first-survey')
+
+    url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)$',
+        QuestionView.as_view(),
+        name='question'),
+
+    url(r'^survey/(?P<survey_id>\d+)$',
+        SurveyView.as_view(),
+        name='survey'),
+
+    url(r'^first_survey/',
+        redirect_to_first_survey,
+        name='first-survey'),
+
+    url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)/question_response$',
+        QuestionResponseView.as_view(),
+        name='record-response')
 ]
