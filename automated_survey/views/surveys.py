@@ -72,7 +72,9 @@ class QuestionResponseView(View):
         return new_response
 
     def _redirect_for_next_question(self, survey_id, question_id):
-        url_parameters = parameters_for_survey_url(survey_id, question_id)
+        next_question = self._next_question(survey_id, question_id)
+
+        url_parameters = parameters_for_survey_url(next_question.survey_id, next_question.id)
         next_question_url = reverse('question', kwargs=url_parameters)
 
         return redirect(next_question_url)
