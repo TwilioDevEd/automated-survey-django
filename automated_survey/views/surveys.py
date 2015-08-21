@@ -113,6 +113,7 @@ class QuestionResponseView(View):
 
         return HttpResponse(voice_response)
 
+
 @require_POST
 def redirect_to_first_survey(request):
     first_survey = Survey.objects.first()
