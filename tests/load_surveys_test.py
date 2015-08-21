@@ -5,16 +5,12 @@ from automated_survey.util.survey_loader import SurveyLoader
 from django.test import TestCase
 
 sample_survey = """
-{\"questions\":[{\"body\":\"What type of bear is best?\",\"kind\":\"voice\"},{\"body\":\"In a scale of 1 to 10, how cute do you find koalas?\",\"kind\":\"numeric\"},{\"body\":\"Do you think bears beat beets?\",\"kind\":\"yes-no\"},{\"body\":\"What's the relationship between Battlestar Galactica and bears?\",\"kind\":\"voice\"},{\"body\":\"Do sloths qualify as bears?\",\"kind\":\"voice\"}],\"title\":\"About bears\"}\"'\"}\"\"]\"\"}
-"""
-
-broken_survey = """
-{\"questions\":[{\"\":\"What type of bear is best?\",\"kind\":\"voice\"},{\"\":\"In a scale of 1 to 10, how cute do you find koalas?\",\"kind\":\"numeric\"},{\"body\":\"Do you think bears beat beets?\",\"kind\":\"yes-no\"},{\"body\":\"What's the relationship between Battlestar Galactica and bears?\",\"kind\":\"voice\"},{\"body\":\"Do sloths qualify as bears?\",\"kind\":\"voice\"}],\"title\":\"About bears\"}\"'\"}\"\"]\"\"}
+{"title": "About bears", "questions": [{"body": "What type of bear is best?", "kind": "voice"}, {"body": "In a scale of 1 to 10 how cute do you find koalas?", "kind": "numeric"}, {"body": "Do you think bears beat beets?", "kind": "yes-no"}]}
 """
 
 
 class SurveyLoaderTest(TestCase):
-    def load_survey_test(self):
+    def test_load_survey(self):
         loader = SurveyLoader(sample_survey)
         loader.load_survey()
 
@@ -22,9 +18,5 @@ class SurveyLoaderTest(TestCase):
         all_questions = Question.objects.all()
 
         assert len(all_surveys) == 1
-        assert len(all_questions) == 5
+        assert len(all_questions) == 3
         assert all_surveys.first().title == 'About bears'
-
-        with pytest.raises(KeyError):
-            loader = SurveyLoader(broken_survey)
-            loader.load_survey()
