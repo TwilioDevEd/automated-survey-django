@@ -16,6 +16,11 @@
         "SECRET_KEY": {
             "description": "App key for Django",
             "generator": "secret"
+        },
+        "DJANGO_SETTINGS_MODULE": {
+            "description": "Instructs our app to use the production settings module",
+            "value": "automated_survey.settings.production",
+            "required": true
         }
     },
     "website": "https://github.com/TwilioDevEd/automated-survey-django",
