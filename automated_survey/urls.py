@@ -18,7 +18,9 @@ from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
 
 from automated_survey.views.surveys import redirect_to_first_survey
-from automated_survey.views.surveys import SurveyView, QuestionView, QuestionResponseView
+from automated_survey.views.surveys import SurveyView, QuestionView
+from automated_survey.views.surveys import QuestionResponseView
+from automated_survey.views.surveys import SurveyResultsView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -34,6 +36,10 @@ urlpatterns = [
     url(r'^first_survey/',
         csrf_exempt(redirect_to_first_survey),
         name='first-survey'),
+
+    url(r'^survey/(?P<survey_id>\d+)/results$',
+        SurveyResultsView.as_view(),
+        name='survey-results'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)/question_response$',
         csrf_exempt(QuestionResponseView.as_view()),

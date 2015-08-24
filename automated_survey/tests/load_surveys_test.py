@@ -5,7 +5,7 @@ from django.core.management import call_command
 
 class SurveyLoaderTest(TestCase):
     def test_load_survey(self):
-        call_command('load_survey', 'tests/fixtures/bear_survey.json')
+        call_command('load_survey', 'automated_survey/tests/fixtures/bear_survey.json')
 
         all_surveys = Survey.objects.all()
         all_questions = Question.objects.all()

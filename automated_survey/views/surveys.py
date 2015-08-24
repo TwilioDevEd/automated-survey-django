@@ -2,7 +2,7 @@ from automated_survey.models import Survey, Question, QuestionResponse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render_to_response
 from django.views.decorators.http import require_POST
 from twilio import twiml
 
@@ -113,6 +113,12 @@ class QuestionResponseView(View):
 
         return HttpResponse(voice_response)
 
+
+class SurveyResultsView(View):
+    http_method_names = ['get']
+
+    def get(self, request, survey_id):
+        return render_to_response('base_template.html')
 
 @require_POST
 def redirect_to_first_survey(request):

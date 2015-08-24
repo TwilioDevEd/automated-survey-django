@@ -3,6 +3,7 @@ import os
 from .env import env
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.dirname(__file__)
 
 
 # Quick-start development settings - unsuitable for production
@@ -50,7 +51,7 @@ ROOT_URLCONF = 'automated_survey.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,5 +92,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
+STATICFILES_DIRS = (os.path.join(PROJECT_DIR, 'static'),)
+STATIC_ROOT = 'static/'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
