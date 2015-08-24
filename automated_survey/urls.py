@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from views.surveys import redirect_to_first_survey
-from views.surveys import SurveyView, QuestionView, QuestionResponseView
 from django.views.decorators.csrf import csrf_exempt
+
+from automated_survey.views.surveys import redirect_to_first_survey
+from automated_survey.views.surveys import SurveyView, QuestionView, QuestionResponseView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
