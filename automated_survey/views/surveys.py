@@ -94,7 +94,7 @@ class QuestionResponseView(View):
         questions = survey.question_set.order_by('id')
         next_questions = filter(lambda q: q.id > int(question_id), questions)
 
-        return next_questions[0]
+        return list(next_questions)[0]
 
     def _question_response_content(self, request, question_kind):
         if question_kind in ['yes-no', 'numeric']:

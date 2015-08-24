@@ -24,7 +24,7 @@ class SurveyRedirectionTest(TestCase):
 
         response = self.client.get(reverse('survey', kwargs={'survey_id': survey.id}))
 
-        assert survey.title in response.content
+        assert survey.title in response.content.decode('utf8')
 
     def test_redirect_to_first_question(self):
         survey = Survey(title='A testing survey')
@@ -38,7 +38,7 @@ class SurveyRedirectionTest(TestCase):
 
         response = self.client.get(reverse('survey', kwargs={'survey_id': survey.id}))
 
-        assert question_url in response.content
+        assert question_url in response.content.decode('utf8')
 
 
 class ShowQuestionTest(TestCase):
@@ -60,9 +60,9 @@ class ShowQuestionTest(TestCase):
 
         voice_response = self.client.get(reverse('question', kwargs=self.question_ids))
 
-        assert self.question.body in voice_response.content
-        assert 'Record' in voice_response.content
-        assert question_store_url in voice_response.content
+        assert self.question.body in voice_response.content.decode('utf8')
+        assert 'Record' in voice_response.content.decode('utf8')
+        assert question_store_url in voice_response.content.decode('utf8')
 
     def test_show_numeric_question(self):
         self.question.kind = 'numeric'
@@ -70,7 +70,7 @@ class ShowQuestionTest(TestCase):
 
         numeric_response = self.client.get(reverse('question', kwargs=self.question_ids))
 
-        assert 'Gather' in numeric_response.content
+        assert 'Gather' in numeric_response.content.decode('utf8')
 
     def test_show_yesno_question(self):
         self.question.kind = 'yes-no'
@@ -78,7 +78,7 @@ class ShowQuestionTest(TestCase):
 
         yesno_response = self.client.get(reverse('question', kwargs=self.question_ids))
 
-        assert 'Gather' in yesno_response.content
+        assert 'Gather' in yesno_response.content.decode('utf8')
 
 
 class StoreQuestionResponseTest(TestCase):
@@ -149,4 +149,4 @@ class StoreQuestionResponseTest(TestCase):
         response = self.client.post(question_store_url_one, request_parameters)
 
         assert response.status_code == 200
-        assert 'Redirect' not in response.content
+        assert 'Redirect' not in response.content.decode('utf8')
