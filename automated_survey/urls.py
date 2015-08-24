@@ -18,12 +18,15 @@ from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
 
 from automated_survey.views.surveys import redirect_to_first_survey
+from automated_survey.views.surveys import redirect_to_first_results
 from automated_survey.views.surveys import SurveyView, QuestionView
 from automated_survey.views.surveys import QuestionResponseView
 from automated_survey.views.surveys import SurveyResultsView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^$', redirect_to_first_results, name='app-root'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)$',
         QuestionView.as_view(),
