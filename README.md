@@ -1,7 +1,5 @@
 # Automated surveys (Django)
-<!---
 [![Build Status](https://travis-ci.org/TwilioDevEd/automated-survey-django.svg?branch=master)](https://travis-ci.org/TwilioDevEd/automated-survey-django)
--->
 
 Use Twilio to conduct automated phone surveys.
 
