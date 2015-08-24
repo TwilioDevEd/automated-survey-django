@@ -1,0 +1,1 @@
+web: gunicorn automated_survey.wsgi:application
