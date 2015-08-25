@@ -1,0 +1,6 @@
+{
+    "title": "Automated surveys with Django",
+    "repo": "TwilioDevEd/automated-survey-django",
+    "description": "Learn how to leverage the Twilio API and TwiML to conduct automated phone surveys.",
+    "heroku": true
+}

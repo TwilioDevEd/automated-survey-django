@@ -1,0 +1,200 @@
+<!DOCTYPE html><html><head><title>Automated surveys with Django</title><style>body, html {
+  height:100%;
+  width:100%;
+  padding:0;
+  margin:0;
+  overflow:hidden;
+  background-color:#ddd;
+}
+.wrapper {
+  height:100%;
+  width:100%;
+}</style><link rel="shortcut icon" href="//twilio.com/bundles/marketing/img/favicons/favicon.ico"><link rel="apple-touch-icon" href="//twilio.com/bundles/marketing/img/favicons/favicon_57.png"><link rel="apple-touch-icon" sizes="72x72" href="//twilio.com/bundles/marketing/img/favicons/favicon_72.png"><link rel="apple-touch-icon" sizes="114x114" href="//twilio.com/bundles/marketing/img/favicons/favicon_114.png"><link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"><link rel="stylesheet" href="viewsaurus.css"></head><body><div class="wrapper"><div id="viewsaurus" data-title="Automated surveys with Django"><div class="saurus-panes"><div class="saurus-prose"><div class="saurus-prose-header"><div class="title-outer"><span class="step-title">Automated surveys with Django</span></div></div><div class="saurus-nav-buttons"><div class="saurus-nav-button nav-overview"><div class="saurus-nav-button-inner"><i class="fa fa-fw fa-list"></i></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-previous"><div class="saurus-nav-button-inner"><a href=""> <i class="fa fa-fw fa-play fa-rotate-180"></i></a></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-next clickable"><div class="saurus-nav-button-inner"><a href="#1"> <i class="fa fa-fw fa-play"></i></a></div></div><div class="saurus-next-title"><span class="next-title-inner"></span></div></div><div class="saurus-progress-bar"></div><div class="saurus-start"><p>Learn how to leverage the Twilio API and TwiML to conduct automated phone surveys.</p><a href="#0">Start Tutorial</a></div><div class="saurus-content"><div data-title="Automated surveys with Twilio, TwiML and Django" class="chapter"><div data-file=".env.example" class="step"><h2 id="what-does-the-application-do-">What does the application do?</h2>
+<p>This <a href="https://www.djangoproject.com/">Django 1.8</a> sample
+application demonstrates using Twilio and
+<a href="https://www.twilio.com/docs/api/twiml">TwiML</a> to deliver a
+survey that can be completed via voice call. The survey
+actually works via SMS text messages, too, but we&#39;re going to
+focus on the looping logic necessary to conduct an interview
+over the phone. In this tutorial, we&#39;ll highlight the code
+that interacts with Twilio and in turn makes the application
+tick. To run this sample app yourself, <a href="https://github.com/TwilioDevEd/automated-survey-django">download the code and
+follow the instructions on
+GitHub</a>. Let&#39;s
+get started! Click the right arrow above to move to the next
+step of the tutorial.</p>
+<hr>
+<p><strong>See also</strong></p>
+<ul>
+<li><a href="https://www.djangoproject.com/start/">Get started with Django</a></li>
+<li><a href="https://docs.djangoproject.com/en/1.8/ref/">Django API reference</a></li>
+<li><a href="https://www.twilio.com/docs/quickstart/python/twiml">TwiML Python Quickstart Tutorial</a></li>
+<li><a href="https://twilio-python.readthedocs.org/en/latest/">Twilio Python Helper Library</a></li>
+</ul>
+</div><div data-file=".env.example" data-highlight="5-6" class="step"><h2 id="configure-the-application">Configure the application</h2>
+<p>The application only requires a database to store the results
+of surveys. Rename <code>.env.example</code> to <code>.env</code> and customize to
+match your needs. You can find more details on how to setup
+the application in the <a href="https://github.com/TwilioDevEd/automated-survey-django/blob/master/README.md">README
+file</a>. Now
+that we have configured a database it’s time to load some
+survey data in it. All configuration is stored in the
+environment.</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="https://django-environ.readthedocs.org/en/latest/">Django-environ documentation</a></li>
+<li><a href="https://docs.djangoproject.com/en/1.8/topics/settings/">Django settings documentation</a></li>
+</ul>
+</div><div data-file="automated_survey/management/commands/load_survey.py" data-highlight="7-19" class="step"><h2 id="create-a-survey">Create a survey</h2>
+<p>If we want to conduct automated surveys we will first need
+some questions. For your convenience, the application’s
+repository includes a <a href="https://github.com/TwilioDevEd/automated-survey-django/blob/master/bear_survey.json">sample
+survey</a>
+you can load through <code>manage.py</code> using the also included
+<code>load_survey</code> command. You can of course write your own survey
+following the same format.</p>
+<p>We want users to take our survey, so next we’re going to
+implement the webhooks Twilio will call when it receives a
+call.</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="https://docs.djangoproject.com/en/1.8/howto/custom-management-commands/">Django custom management commands</a></li>
+<li><a href="https://docs.djangoproject.com/en/1.8/topics/db/models/">Django models</a></li>
+</ul>
+</div><div data-file="automated_survey/views/surveys.py" data-highlight="57-61" class="step"><h2 id="respond-to-a-phone-call">Respond to a Phone Call</h2>
+<p>Whenever one of <a href="https://www.twilio.com/user/account/phone-numbers/incoming">your Twilio phone
+numbers</a>
+receives a call, Twilio will make an HTTP request to the voice
+URL configured under it.</p>
+<p>For this application Twilio should be configured to request
+the application&#39;s <code>/first_survey</code> endpoint. Since our app only
+handles one survey, the endpoint will reply with a redirect to
+the location of the first survey it finds. The URL for this
+survey should look something like <code>/survey/&lt;some_id&gt;</code>. <a href="https://www.twilio.com/docs/api/twiml/your_response">Twilio
+is a well-behaved HTTP
+client</a>
+and will follow the redirect and thus make another
+request. Next we will handle the request made after the
+redirect.</p>
+<p>Next we will handle the request made after the redirect.</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="https://www.twilio.com/docs/api/twiml/your_response">TwiML Voice: Your Response</a></li>
+<li><a href="https://docs.djangoproject.com/en/1.8/ref/request-response/#django.http.HttpResponseRedirect">Redirect with Django</a></li>
+</ul>
+</div><div data-file="automated_survey/views/surveys.py" data-highlight="13-28" class="step"><h2 id="welcome-the-caller-to-the-survey">Welcome the caller to the survey</h2>
+<p>Before we get started we want to welcome the user to our survey
+system using the
+<a href="https://www.twilio.com/docs/api/twiml/say"><code>&lt;Say&gt;</code></a> verb. After
+serving the welcome message, we will redirect Twilio to the
+first question using the
+<a href="https://www.twilio.com/docs/api/twiml/redirect"><code>&lt;Redirect&gt;</code></a>
+verb. The contents of the latter tag must be the URL of the
+first question in the survey.</p>
+<p>Now the caller is about to listen to the first question</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="https://www.twilio.com/docs/api/twiml/your_response">TwiML Voice: Your Response</a></li>
+<li><a href="https://www.twilio.com/docs/api/twiml/say">TwiML Voice: &lt;Say&gt;</a></li>
+<li><a href="https://www.twilio.com/docs/api/twiml/redirect">TwiML Voice: &lt;Redirect&gt;</a></li>
+</ul>
+</div><div data-file="automated_survey/views/questions.py" data-highlight="12-27" class="step"><h2 id="ask-the-caller-a-question">Ask the caller a question</h2>
+<p>Asking the question is pretty straightforward, but we also
+need to record the response.</p>
+<p>Recording the answer is slightly more involved. If the
+question is of kind &quot;voice&quot; then we use the
+<a href="https://www.twilio.com/docs/api/twiml/record"><code>&lt;Record&gt;</code></a>
+verb. However, if we expect dialpad input we use the the
+<a href="https://www.twilio.com/docs/api/twiml/gather"><code>&lt;Gather&gt;</code></a>
+verb. Both verbs take an <code>action</code> attribute and a <code>method</code>
+attribute. Twilio&#39;s client will use both attributes to make a
+request we can use to store the caller&#39;s answer to the
+question.</p>
+<p>The <code>action</code> URL will be
+<code>/question/&lt;question_id&gt;/question_response</code> for both TwiML
+verbs. We also include a <code>?Kind=&lt;question kind&gt;</code> URL parameter
+so we can identify the question kind before we store it in the
+database. This is the application endpoint that should store
+the response to a question</p>
+<p>Now that the caller has answered our question we want to store
+her answer.&#39;</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="https://www.twilio.com/docs/api/twiml/gather">TwiML Voice: &lt;Gather&gt;</a></li>
+<li><a href="https://www.twilio.com/docs/api/twiml/record">TwiML Voice: &lt;Record&gt;</a></li>
+</ul>
+</div><div data-file="automated_survey/views/question_responses.py" data-highlight="15-21" class="step"><h2 id="store-a-question-s-answer">Store a question&#39;s answer</h2>
+<p>When the caller has finished entering her response, Twilio will make a
+request to this controller including all the <a href="https://www.twilio.com/docs/api/twiml/twilio_request">call
+parameters</a> we
+will need . For this sample application we will store the
+<code>RecordingUrl</code> or <code>Digits</code> parameter for voice and yes-no/numeric
+answers accordingly. For this sample we will also save the <code>CallSid</code>
+so we can uniquely identify a call.</p>
+<p>Most surveys include more than a single question so we must now
+redirect the user to the next question in this survey.</p>
+</div><div data-file="automated_survey/views/question_responses.py" data-highlight="36-48" class="step"><h2 id="redirect-the-user-to-the-next-question">Redirect the user to the next question</h2>
+<p>Now we need to locate the next question. This is rather
+straightfoward since we have the same request as in the previous
+step therefore we have access to the same information. We merely need
+to find the question after the current one and reply with a
+redirect with the next question&#39;s URL as the target.</p>
+<p>However, we need to handle the case where there&#39;s no next
+question. In this case we simply say &quot;good-bye&quot; and hangup.</p>
+<p>The application&#39;s users might want to see the answers to their
+survey so we&#39;re implementing that next.</p>
+<hr>
+<p><strong>See Also:</strong> </p>
+<ul>
+<li><a href="https://www.twilio.com/docs/api/twiml/say">TwiML Voice: &lt;Say&gt;</a></li>
+<li><a href="https://www.twilio.com/docs/api/twiml/hangup">TwiML Voice: &lt;Hangup&gt;</a></li>
+</ul>
+</div><div data-file="automated_survey/views/surveys.py" data-highlight="34-44" class="step"><h2 id="display-the-survey-results">Display the survey results</h2>
+<p>Now we want a page where the survey’s author can see the
+responses to the survey.</p>
+<p>For this route we simply query the database through an ORM query
+and then display the information within a Django template. We
+display a panel for every individual call. It&#39;s worth mentioning
+we also redirect the application&#39;s root route to this route.</p>
+<hr>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="https://docs.djangoproject.com/en/1.8/topics/db/queries/">Django queries</a></li>
+<li><a href="https://docs.djangoproject.com/en/1.8/topics/db/queries/#lookups-that-span-relationships">Django queries that span relationships</a></li>
+<li><a href="https://docs.djangoproject.com/en/1.8/topics/templates/">Django templates</a></li>
+</ul>
+</div><div class="step"><h2 id="where-to-next-">Where to next?</h2>
+<p>It&#39;s done! If you have configured one of your voice-enable Twilio
+numbers to the application built in this tutorial you should be able
+to take the survey and see the results under root route of the
+application. We hope you found this sample application useful. If
+you&#39;re a Python developer working with Twilio, you might enjoy these
+other tutorials:</p>
+<p><a href="https://www.twilio.com/docs/howto/walkthrough/appointment-reminders/python/django">Appointment
+reminders</a>:
+Learn to implement appointment reminders in your web app with
+Twilio. Appointment reminders allow you to automate the process of
+reaching out to your customers in advance of an upcoming appointment.</p>
+<p><a href="https://www.twilio.com/docs/howto/walkthrough/two-factor-authentication/python/flask">Two factor authentication with
+Flask</a>:
+earn to implement two-factor authentication (2FA) in your web app with
+Twilio-powered Authy. 2FA helps further secure your users&#39; data by
+validating more than just a password. &#39;&#39;</p>
+<h3 id="did-this-help-">Did this help?</h3>
+<p>Thanks for checking out this tutorial! If you have any feedback
+to share with us, we&#39;d love to hear it. Tweet
+<a href="http://twitter.com/twilio">@twilio</a> to let us know what you
+think.</p>
+</div></div>
+<div class="saurus-files" style="display:none;"><textarea class="saurus-file" data-file=".env.example" data-mode="text">REFUQUJBU0VfVVJMPQpERUJVRz0KU0VDUkVUX0tFWT0=</textarea>
+<textarea class="saurus-file" data-file="automated_survey/management/commands/load_survey.py" data-mode="python">aW1wb3J0IG9zCmZyb20gZGphbmdvLmNvcmUubWFuYWdlbWVudCBpbXBvcnQgQmFzZUNvbW1hbmQKZnJvbSBhdXRvbWF0ZWRfc3VydmV5LnNldHRpbmdzLmVudiBpbXBvcnQgcm9vdApmcm9tIGF1dG9tYXRlZF9zdXJ2ZXkudXRpbC5zdXJ2ZXlfbG9hZGVyIGltcG9ydCBTdXJ2ZXlMb2FkZXIKCgpjbGFzcyBDb21tYW5kKEJhc2VDb21tYW5kKToKICAgIENPTU1BTkQgPSAnbG9hZF9zdXJ2ZXlzJwoKICAgIGRlZiBhZGRfYXJndW1lbnRzKHNlbGYsIHBhcnNlcik6CiAgICAgICAgcGFyc2VyLmFkZF9hcmd1bWVudChzZWxmLkNPTU1BTkQsIG1ldGF2YXI9J3N1cnZleS1uYW1lJywgbmFyZ3M9MSkKCiAgICBkZWYgaGFuZGxlKHNlbGYsICphcmdzLCAqKm9wdGlvbnMpOgogICAgICAgIGZpbGVfbmFtZSA9IG9wdGlvbnNbJ2xvYWRfc3VydmV5cyddWzBdCiAgICAgICAgYWJzb2x1dGVfZmlsZV9uYW1lID0gb3MucGF0aC5qb2luKHN0cihyb290KSwgZmlsZV9uYW1lKQoKICAgICAgICB3aXRoIG9wZW4oYWJzb2x1dGVfZmlsZV9uYW1lLCAncicpIGFzIHN1cnZleV90b19sb2FkOgogICAgICAgICAgICBsb2FkZXIgPSBTdXJ2ZXlMb2FkZXIoc3VydmV5X3RvX2xvYWQucmVhZCgpKQogICAgICAgICAgICBsb2FkZXIubG9hZF9zdXJ2ZXkoKQo=</textarea>
+<textarea class="saurus-file" data-file="automated_survey/views/surveys.py" data-mode="python">ZnJvbSBhdXRvbWF0ZWRfc3VydmV5Lm1vZGVscyBpbXBvcnQgU3VydmV5LCBRdWVzdGlvbiwgUXVlc3Rpb25SZXNwb25zZQpmcm9tIGRqYW5nby5odHRwIGltcG9ydCBIdHRwUmVzcG9uc2UsIEh0dHBSZXNwb25zZVJlZGlyZWN0CmZyb20gZGphbmdvLnZpZXdzLmdlbmVyaWMgaW1wb3J0IFZpZXcKZnJvbSBkamFuZ28uY29yZS51cmxyZXNvbHZlcnMgaW1wb3J0IHJldmVyc2UKZnJvbSBkamFuZ28uc2hvcnRjdXRzIGltcG9ydCByZW5kZXJfdG9fcmVzcG9uc2UKZnJvbSBkamFuZ28udmlld3MuZGVjb3JhdG9ycy5odHRwIGltcG9ydCByZXF1aXJlX1BPU1QsIHJlcXVpcmVfR0VUCmZyb20gdHdpbGlvIGltcG9ydCB0d2ltbAoKCmNsYXNzIFN1cnZleVZpZXcoVmlldyk6CiAgICBodHRwX21ldGhvZF9uYW1lcyA9IFsnZ2V0J10KCiAgICBkZWYgZ2V0KHNlbGYsIHJlcXVlc3QsIHN1cnZleV9pZCk6CiAgICAgICAgc3VydmV5ID0gU3VydmV5Lm9iamVjdHMuZ2V0KGlkPXN1cnZleV9pZCkKICAgICAgICBmaXJzdF9xdWVzdGlvbiA9IFF1ZXN0aW9uLm9iamVjdHMub3JkZXJfYnkoJ2lkJykuZmlyc3QoKQoKICAgICAgICBmaXJzdF9xdWVzdGlvbl9pZHMgPSB7CiAgICAgICAgICAgICdzdXJ2ZXlfaWQnOiAgIHN1cnZleS5pZCwKICAgICAgICAgICAgJ3F1ZXN0aW9uX2lkJzogZmlyc3RfcXVlc3Rpb24uaWQKICAgICAgICB9CgogICAgICAgIGZpcnN0X3F1ZXN0aW9uX3VybCA9IHJldmVyc2UoJ3F1ZXN0aW9uJywga3dhcmdzPWZpcnN0X3F1ZXN0aW9uX2lkcykKICAgICAgICB2b2ljZV9yZXNwb25zZSA9IHR3aW1sLlJlc3BvbnNlKCkKCiAgICAgICAgdm9pY2VfcmVzcG9uc2Uuc2F5KCdIZWxsbyBhbmQgdGhhbmsgeW91IGZvciB0YWtpbmcgdGhlICVzIHN1cnZleScgJSBzdXJ2ZXkudGl0bGUpCiAgICAgICAgdm9pY2VfcmVzcG9uc2UucmVkaXJlY3QoZmlyc3RfcXVlc3Rpb25fdXJsLCBtZXRob2Q9J0dFVCcpCgogICAgICAgIHJldHVybiBIdHRwUmVzcG9uc2Uodm9pY2VfcmVzcG9uc2UsIGNvbnRlbnRfdHlwZT0nYXBwbGljYXRpb24veG1sJykKCgpjbGFzcyBTdXJ2ZXlSZXN1bHRzVmlldyhWaWV3KToKICAgIGh0dHBfbWV0aG9kX25hbWVzID0gWydnZXQnXQoKICAgIGRlZiBnZXQoc2VsZiwgcmVxdWVzdCwgc3VydmV5X2lkKToKICAgICAgICByZXNwb25zZXMgPSBRdWVzdGlvblJlc3BvbnNlLm9iamVjdHMuZmlsdGVyKHF1ZXN0aW9uX19zdXJ2ZXlfX2lkPXN1cnZleV9pZCkKICAgICAgICBzdXJ2ZXkgPSBTdXJ2ZXkub2JqZWN0cy5nZXQoaWQ9c3VydmV5X2lkKQogICAgICAgIHJlc3BvbnNlc190b19yZW5kZXIgPSBsaXN0KG1hcChsYW1iZGEgcXI6IHNlbGYuX3RvX3Jlc3BvbnNlKHFyKSwgcmVzcG9uc2VzKSkKCiAgICAgICAgdGVtcGxhdGVfY29udGV4dCA9IHsKICAgICAgICAgICAgJ3Jlc3BvbnNlcyc6IHJlc3BvbnNlc190b19yZW5kZXIsCiAgICAgICAgICAgICdzdXJ2ZXlfdGl0bGUnOiBzdXJ2ZXkudGl0bGUKICAgICAgICB9CgogICAgICAgIHJldHVybiByZW5kZXJfdG9fcmVzcG9uc2UoJ3Jlc3VsdHMuaHRtbCcsIGNvbnRleHQ9dGVtcGxhdGVfY29udGV4dCkKCiAgICBkZWYgX3RvX3Jlc3BvbnNlKHNlbGYsIHF1ZXN0aW9uX3Jlc3BvbnNlKToKICAgICAgICByZXR1cm4gewogICAgICAgICAgICAnYm9keSc6IHF1ZXN0aW9uX3Jlc3BvbnNlLnF1ZXN0aW9uLmJvZHksCiAgICAgICAgICAgICdraW5kJzogcXVlc3Rpb25fcmVzcG9uc2UucXVlc3Rpb24ua2luZCwKICAgICAgICAgICAgJ3Jlc3BvbnNlJzogcXVlc3Rpb25fcmVzcG9uc2UucmVzcG9uc2UsCiAgICAgICAgICAgICdjYWxsX3NpZCc6IHF1ZXN0aW9uX3Jlc3BvbnNlLmNhbGxfc2lkLAogICAgICAgICAgICAncGhvbmVfbnVtYmVyJzogcXVlc3Rpb25fcmVzcG9uc2UucGhvbmVfbnVtYmVyLAogICAgICAgIH0KCgpAcmVxdWlyZV9QT1NUCmRlZiByZWRpcmVjdF90b19maXJzdF9zdXJ2ZXkocmVxdWVzdCk6CiAgICBmaXJzdF9zdXJ2ZXkgPSBTdXJ2ZXkub2JqZWN0cy5maXJzdCgpCiAgICBmaXJzdF9zdXJ2ZXlfdXJsID0gcmV2ZXJzZSgnc3VydmV5Jywga3dhcmdzPXsnc3VydmV5X2lkJzogZmlyc3Rfc3VydmV5LmlkfSkKCiAgICByZXR1cm4gSHR0cFJlc3BvbnNlUmVkaXJlY3QoZmlyc3Rfc3VydmV5X3VybCkKCgpAcmVxdWlyZV9HRVQKZGVmIHJlZGlyZWN0X3RvX2ZpcnN0X3Jlc3VsdHMocmVxdWVzdCk6CiAgICBmaXJzdF9zdXJ2ZXkgPSBTdXJ2ZXkub2JqZWN0cy5maXJzdCgpCiAgICByZXN1bHRzX2Zvcl9maXJzdF9zdXJ2ZXkgPSByZXZlcnNlKCdzdXJ2ZXktcmVzdWx0cycsIGt3YXJncz17J3N1cnZleV9pZCc6IGZpcnN0X3N1cnZleS5pZH0pCiAgICByZXR1cm4gSHR0cFJlc3BvbnNlUmVkaXJlY3QocmVzdWx0c19mb3JfZmlyc3Rfc3VydmV5KQo=</textarea>
+<textarea class="saurus-file" data-file="automated_survey/views/questions.py" data-mode="python">ZnJvbSBkamFuZ28udmlld3MuZ2VuZXJpYyBpbXBvcnQgVmlldwpmcm9tIGRqYW5nby5jb3JlLnVybHJlc29sdmVycyBpbXBvcnQgcmV2ZXJzZQpmcm9tIHR3aWxpbyBpbXBvcnQgdHdpbWwKZnJvbSBkamFuZ28uaHR0cCBpbXBvcnQgSHR0cFJlc3BvbnNlCgpmcm9tIGF1dG9tYXRlZF9zdXJ2ZXkubW9kZWxzIGltcG9ydCBRdWVzdGlvbgpmcm9tIGF1dG9tYXRlZF9zdXJ2ZXkudmlld3MuY29tbW9uIGltcG9ydCBwYXJhbWV0ZXJzX2Zvcl9zdXJ2ZXlfdXJsCgpjbGFzcyBRdWVzdGlvblZpZXcoVmlldyk6CiAgICBodHRwX21ldGhvZF9uYW1lcyA9IFsnZ2V0J10KCiAgICBkZWYgZ2V0KHNlbGYsIHJlcXVlc3QsIHN1cnZleV9pZCwgcXVlc3Rpb25faWQpOgogICAgICAgIHF1ZXN0aW9uID0gUXVlc3Rpb24ub2JqZWN0cy5nZXQoaWQ9cXVlc3Rpb25faWQpCgogICAgICAgIHVybF9wYXJhbWV0ZXJzID0gcGFyYW1ldGVyc19mb3Jfc3VydmV5X3VybChxdWVzdGlvbi5zdXJ2ZXkuaWQsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHF1ZXN0aW9uLmlkKQoKICAgICAgICBxdWVzdGlvbl9zdG9yZV91cmwgPSByZXZlcnNlKCdyZWNvcmQtcmVzcG9uc2UnLCBrd2FyZ3M9dXJsX3BhcmFtZXRlcnMpCgogICAgICAgIHZvaWNlX3Jlc3BvbnNlID0gdHdpbWwuUmVzcG9uc2UoKQogICAgICAgIHZvaWNlX3Jlc3BvbnNlLnNheShxdWVzdGlvbi5ib2R5KQogICAgICAgIHZvaWNlX3Jlc3BvbnNlLnNheShpbnN0cnVjdGlvbnNbcXVlc3Rpb24ua2luZF0pCiAgICAgICAgdm9pY2VfcmVzcG9uc2UgPSBhdHRhY2hfY29tbWFuZF90b19yZXNwb25zZSgKICAgICAgICAgICAgdm9pY2VfcmVzcG9uc2UsIHF1ZXN0aW9uLmtpbmQsIHF1ZXN0aW9uX3N0b3JlX3VybAogICAgICAgICkKCiAgICAgICAgcmV0dXJuIEh0dHBSZXNwb25zZSh2b2ljZV9yZXNwb25zZSwgY29udGVudF90eXBlPSdhcHBsaWNhdGlvbi94bWwnKQoKZGVmIGF0dGFjaF9jb21tYW5kX3RvX3Jlc3BvbnNlKHJlc3BvbnNlLCBraW5kLCBhY3Rpb24pOgogICAgaWYga2luZCA9PSAndm9pY2UnOgogICAgICAgIHJlc3BvbnNlLnJlY29yZChhY3Rpb249YWN0aW9uICsgJz9LaW5kPXZvaWNlJywgbWV0aG9kPSdQT1NUJykKICAgIGVsaWYga2luZCA9PSAnbnVtZXJpYyc6CiAgICAgICAgcmVzcG9uc2UuZ2F0aGVyKGFjdGlvbj1hY3Rpb24gKyAnP0tpbmQ9bnVtZXJpYycsIG1ldGhvZD0nUE9TVCcpCiAgICBlbGlmIGtpbmQgPT0gJ3llcy1ubyc6CiAgICAgICAgcmVzcG9uc2UuZ2F0aGVyKGFjdGlvbj1hY3Rpb24gKyAnP0tpbmQ9eWVzLW5vJywgbWV0aG9kPSdQT1NUJykKICAgIGVsc2U6CiAgICAgICAgcmFpc2UgTm9TdWNoVmVyYkV4Y2VwdGlvbignJXMgaXMgbm90IGEgc3VwcG9ydGVkIHF1ZXN0aW9uIHR5cGUnICUga2luZCkKCiAgICByZXR1cm4gcmVzcG9uc2UKCmluc3RydWN0aW9ucyA9IHsKICAgICd2b2ljZSc6ICdQbGVhc2UgcmVjb3JkIHlvdXIgYW5zd2VyIGFmdGVyIHRoZSBiZWVwIGFuZCB0aGVuIGhpdCB0aGUgcG91bmQgc2lnbicsCiAgICAneWVzLW5vJzogJ1BsZWFzZSBwcmVzcyB0aGUgb25lIGtleSBmb3IgeWVzIGFuZCB0aGUgemVybyBrZXkgZm9yIG5vIGFuZCB0aGVuIGhpdCB0aGUgcG91bmQgc2lnbicsCiAgICAnbnVtZXJpYyc6ICdQbGVhc2UgcHJlc3MgYSBudW1iZXIgYmV0d2VlbiAxIGFuZCAxMCBhbmQgdGhlbiBoaXQgdGhlIHBvdW5kIHNpZ24nCn0KCgpjbGFzcyBOb1N1Y2hWZXJiRXhjZXB0aW9uKEV4Y2VwdGlvbik6CiAgICBwYXNzCg==</textarea>
+<textarea class="saurus-file" data-file="automated_survey/views/question_responses.py" data-mode="python">ZnJvbSBkamFuZ28udmlld3MuZ2VuZXJpYyBpbXBvcnQgVmlldwpmcm9tIGRqYW5nby5jb3JlLnVybHJlc29sdmVycyBpbXBvcnQgcmV2ZXJzZQpmcm9tIGRqYW5nby5zaG9ydGN1dHMgaW1wb3J0IHJlZGlyZWN0CmZyb20gZGphbmdvLmh0dHAgaW1wb3J0IEh0dHBSZXNwb25zZQpmcm9tIHR3aWxpbyBpbXBvcnQgdHdpbWwKCmZyb20gYXV0b21hdGVkX3N1cnZleS5tb2RlbHMgaW1wb3J0IFN1cnZleSwgUXVlc3Rpb25SZXNwb25zZQpmcm9tIGF1dG9tYXRlZF9zdXJ2ZXkudmlld3MuY29tbW9uIGltcG9ydCBwYXJhbWV0ZXJzX2Zvcl9zdXJ2ZXlfdXJsCgoKY2xhc3MgUXVlc3Rpb25SZXNwb25zZVZpZXcoVmlldyk6CiAgICBodHRwX21ldGhvZF9uYW1lcyA9IFsncG9zdCddCgogICAgZGVmIHBvc3Qoc2VsZiwgcmVxdWVzdCwgc3VydmV5X2lkLCBxdWVzdGlvbl9pZCk6CiAgICAgICAgcXVlc3Rpb25fa2luZCA9IHJlcXVlc3QuR0VULmdldCgnS2luZCcpCiAgICAgICAgaWYgcXVlc3Rpb25fa2luZCBub3QgaW4gWyd5ZXMtbm8nLCAnbnVtZXJpYycsICd2b2ljZSddOgogICAgICAgICAgICByYWlzZSBOb1N1Y2hRdWVzdGlvbktpbmRFeGNlcHRpb24KCiAgICAgICAgbmV3X3Jlc3BvbnNlID0gc2VsZi5fcXVlc3Rpb25fcmVzcG9uc2VfZnJvbV9yZXF1ZXN0KHJlcXVlc3QpCiAgICAgICAgbmV3X3Jlc3BvbnNlLnF1ZXN0aW9uX2lkID0gcXVlc3Rpb25faWQKICAgICAgICBuZXdfcmVzcG9uc2Uuc2F2ZSgpCgogICAgICAgIHJldHVybiBzZWxmLl9yZWRpcmVjdF9mb3JfbmV4dF9xdWVzdGlvbihzdXJ2ZXlfaWQsIHF1ZXN0aW9uX2lkKQoKICAgIGRlZiBfcXVlc3Rpb25fcmVzcG9uc2VfZnJvbV9yZXF1ZXN0KHNlbGYsIHJlcXVlc3QpOgogICAgICAgIHF1ZXN0aW9uX2tpbmQgPSByZXF1ZXN0LkdFVC5nZXQoJ0tpbmQnKQogICAgICAgIChjYWxsX3NpZCwgcGhvbmVfbnVtYmVyKSA9IChyZXF1ZXN0LlBPU1RbJ0NhbGxTaWQnXSwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVxdWVzdC5QT1NUWydGcm9tJ10pCgogICAgICAgIG5ld19yZXNwb25zZSA9IFF1ZXN0aW9uUmVzcG9uc2UoY2FsbF9zaWQ9Y2FsbF9zaWQsIHBob25lX251bWJlcj1waG9uZV9udW1iZXIpCiAgICAgICAgbmV3X3Jlc3BvbnNlLnJlc3BvbnNlID0gc2VsZi5fcXVlc3Rpb25fcmVzcG9uc2VfY29udGVudChyZXF1ZXN0LCBxdWVzdGlvbl9raW5kKQoKICAgICAgICByZXR1cm4gbmV3X3Jlc3BvbnNlCgogICAgZGVmIF9yZWRpcmVjdF9mb3JfbmV4dF9xdWVzdGlvbihzZWxmLCBzdXJ2ZXlfaWQsIHF1ZXN0aW9uX2lkKToKICAgICAgICB0cnk6CiAgICAgICAgICAgIG5leHRfcXVlc3Rpb24gPSBzZWxmLl9uZXh0X3F1ZXN0aW9uKHN1cnZleV9pZCwgcXVlc3Rpb25faWQpCiAgICAgICAgZXhjZXB0IEluZGV4RXJyb3I6CiAgICAgICAgICAgIHJldHVybiBzZWxmLl9nb29kYnllX21lc3NhZ2UoKQoKICAgICAgICB1cmxfcGFyYW1ldGVycyA9IHBhcmFtZXRlcnNfZm9yX3N1cnZleV91cmwobmV4dF9xdWVzdGlvbi5zdXJ2ZXlfaWQsIG5leHRfcXVlc3Rpb24uaWQpCiAgICAgICAgbmV4dF9xdWVzdGlvbl91cmwgPSByZXZlcnNlKCdxdWVzdGlvbicsIGt3YXJncz11cmxfcGFyYW1ldGVycykKCiAgICAgICAgc2VlX290aGVyID0gcmVkaXJlY3QobmV4dF9xdWVzdGlvbl91cmwpCiAgICAgICAgc2VlX290aGVyLnN0YXR1c19jb2RlID0gMzAzCiAgICAgICAgc2VlX290aGVyLnJlYXNvbl9waHJhc2UgPSAnU2VlIE90aGVyJwoKICAgICAgICByZXR1cm4gc2VlX290aGVyCgogICAgZGVmIF9uZXh0X3F1ZXN0aW9uKHNlbGYsIHN1cnZleV9pZCwgcXVlc3Rpb25faWQpOgogICAgICAgIHN1cnZleSA9IFN1cnZleS5vYmplY3RzLmdldChpZD1zdXJ2ZXlfaWQpCgogICAgICAgIHF1ZXN0aW9ucyA9IHN1cnZleS5xdWVzdGlvbl9zZXQub3JkZXJfYnkoJ2lkJykKICAgICAgICBuZXh0X3F1ZXN0aW9ucyA9IGZpbHRlcihsYW1iZGEgcTogcS5pZCA+IGludChxdWVzdGlvbl9pZCksIHF1ZXN0aW9ucykKCiAgICAgICAgcmV0dXJuIGxpc3QobmV4dF9xdWVzdGlvbnMpWzBdCgogICAgZGVmIF9xdWVzdGlvbl9yZXNwb25zZV9jb250ZW50KHNlbGYsIHJlcXVlc3QsIHF1ZXN0aW9uX2tpbmQpOgogICAgICAgIGlmIHF1ZXN0aW9uX2tpbmQgaW4gWyd5ZXMtbm8nLCAnbnVtZXJpYyddOgogICAgICAgICAgICByZXR1cm4gcmVxdWVzdC5QT1NUWydEaWdpdHMnXQogICAgICAgIGVsaWYgcXVlc3Rpb25fa2luZCA9PSAndm9pY2UnOgogICAgICAgICAgICByZXR1cm4gcmVxdWVzdC5QT1NUWydSZWNvcmRpbmdVcmwnXQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIHJhaXNlIE5vU3VjaFF1ZXN0aW9uS2luZEV4Y2VwdGlvbgoKICAgIGRlZiBfZ29vZGJ5ZV9tZXNzYWdlKHNlbGYpOgogICAgICAgIHZvaWNlX3Jlc3BvbnNlID0gdHdpbWwuUmVzcG9uc2UoKQogICAgICAgIHZvaWNlX3Jlc3BvbnNlLnNheSgnVGhhdCB3YXMgdGhlIGxhc3QgcXVlc3Rpb24nKQogICAgICAgIHZvaWNlX3Jlc3BvbnNlLnNheSgnVGhhbmsgeW91IGZvciB0YWtpbmcgdGhpcyBzdXJ2ZXknKQogICAgICAgIHZvaWNlX3Jlc3BvbnNlLnNheSgnR29vZC1ieWUnKQogICAgICAgIHZvaWNlX3Jlc3BvbnNlLmhhbmd1cCgpCgogICAgICAgIHJldHVybiBIdHRwUmVzcG9uc2Uodm9pY2VfcmVzcG9uc2UpCgoKY2xhc3MgTm9TdWNoUXVlc3Rpb25LaW5kRXhjZXB0aW9uKEV4Y2VwdGlvbik6CiAgICBwYXNzCgoK</textarea>
+</div>
+</div><div class="saurus-overview"><ul></ul></div></div><div class="saurus-code"><div class="file-path"><span class="crumb-container"></span><i class="fa fa-fw fa-folder"></i></div><div class="saurus-editor"></div></div><div class="saurus-explorer"><div class="saurus-file-list"></div><a href="https://github.com/TwilioDevEd/automated-survey-django" target="_blank" class="explorer-get-code"> <i class="fa fa-lg fa-github-square"> </i>View Code on GitHub</a></div></div></div></div><script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script><script src="ace/ace.js"></script><script src="ace/theme-monokai.js"></script><script src="viewsaurus.js"></script></body></html>
