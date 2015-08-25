@@ -2,7 +2,7 @@ import pytest
 
 from django.test import TestCase
 from automated_survey.models import Survey, Question, QuestionResponse
-from automated_survey.views.surveys import NoSuchQuestionKindException
+from automated_survey.views.question_responses import NoSuchQuestionKindException
 from django.core.urlresolvers import reverse
 
 
