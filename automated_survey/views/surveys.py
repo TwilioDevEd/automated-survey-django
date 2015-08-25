@@ -34,7 +34,7 @@ class SurveyResultsView(View):
     def get(self, request, survey_id):
         responses = QuestionResponse.objects.filter(question__survey__id=survey_id)
         survey = Survey.objects.get(id=survey_id)
-        responses_to_render = map(lambda qr: self._to_response(qr), responses)
+        responses_to_render = list(map(lambda qr: self._to_response(qr), responses))
 
         template_context = {
             'responses': responses_to_render,
