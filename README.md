@@ -66,6 +66,6 @@ Mind the trailing slash.
 Configure your test database in `.env.test`. You can then run the tests locally using `py.test`
 
 ```
-$ py.test --cov
+$ py.test --cov=automated_survey
 ```
 
