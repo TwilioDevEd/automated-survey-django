@@ -14,7 +14,6 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
-from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
 
 from automated_survey.views.surveys import redirect_to_first_survey
@@ -24,8 +23,6 @@ from automated_survey.views.surveys import show_survey, show_survey_results
 from automated_survey.views.question_responses import QuestionResponseView
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-
     url(r'^$', redirect_to_first_results, name='app_root'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)$',
