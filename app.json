@@ -19,7 +19,7 @@
         },
         "DJANGO_SETTINGS_MODULE": {
             "description": "Instructs our app to use the production settings module",
-            "value": "automated_survey.settings.production",
+            "value": "twilio_sample_project.settings.production",
             "required": true
         }
     },

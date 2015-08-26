@@ -44,7 +44,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'automated_survey.urls'
+ROOT_URLCONF = 'twilio_sample_project.urls'
 
 TEMPLATES = [
     {
@@ -62,7 +62,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'automated_survey.wsgi.application'
+WSGI_APPLICATION = 'twilio_sample_project.wsgi.application'
 
 
 # Database
