@@ -26,7 +26,7 @@ from automated_survey.views.surveys import SurveyView, SurveyResultsView
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', redirect_to_first_results, name='app-root'),
+    url(r'^$', redirect_to_first_results, name='app_root'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)$',
         QuestionView.as_view(),
@@ -36,15 +36,15 @@ urlpatterns = [
         SurveyView.as_view(),
         name='survey'),
 
-    url(r'^first_survey/',
+    url(r'^first-survey/',
         csrf_exempt(redirect_to_first_survey),
-        name='first-survey'),
+        name='first_survey'),
 
     url(r'^survey/(?P<survey_id>\d+)/results$',
         SurveyResultsView.as_view(),
-        name='survey-results'),
+        name='survey_results'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)/question_response$',
         csrf_exempt(QuestionResponseView.as_view()),
-        name='record-response')
+        name='record_response')
 ]

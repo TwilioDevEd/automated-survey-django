@@ -64,5 +64,5 @@ def redirect_to_first_survey(request):
 @require_GET
 def redirect_to_first_results(request):
     first_survey = Survey.objects.first()
-    results_for_first_survey = reverse('survey-results', kwargs={'survey_id': first_survey.id})
+    results_for_first_survey = reverse('survey_results', kwargs={'survey_id': first_survey.id})
     return HttpResponseRedirect(results_for_first_survey)

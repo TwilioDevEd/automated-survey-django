@@ -9,7 +9,7 @@ class SurveyRedirectionTest(TestCase):
         survey = Survey(title='A testing survey')
         survey.save()
 
-        response = self.client.post(reverse('first-survey'))
+        response = self.client.post(reverse('first_survey'))
         expected_url = reverse('survey', kwargs={'survey_id': survey.id})
 
         assert expected_url in response.url
@@ -54,8 +54,8 @@ class SurveyResultsTest(TestCase):
 
         question_response.save()
 
-        redirect = self.client.get(reverse('app-root'))
-        survey_results_url = reverse('survey-results', kwargs={'survey_id': survey.id})
+        redirect = self.client.get(reverse('app_root'))
+        survey_results_url = reverse('survey_results', kwargs={'survey_id': survey.id})
 
         assert survey_results_url in redirect.url
 

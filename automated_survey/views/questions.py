@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from automated_survey.models import Question
 from automated_survey.views.common import parameters_for_survey_url
 
+
 class QuestionView(View):
     http_method_names = ['get']
 
@@ -15,7 +16,7 @@ class QuestionView(View):
         url_parameters = parameters_for_survey_url(question.survey.id,
                                                    question.id)
 
-        question_store_url = reverse('record-response', kwargs=url_parameters)
+        question_store_url = reverse('record_response', kwargs=url_parameters)
 
         voice_response = twiml.Response()
         voice_response.say(question.body)
@@ -25,6 +26,7 @@ class QuestionView(View):
         )
 
         return HttpResponse(voice_response, content_type='application/xml')
+
 
 def attach_command_to_response(response, kind, action):
     if kind == 'voice':
