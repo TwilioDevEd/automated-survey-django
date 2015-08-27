@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 from django.views.decorators.http import require_POST, require_GET
 from twilio import twiml
 
+
 @require_GET
 def show_survey_results(request, survey_id):
     responses = QuestionResponse.objects.filter(question__survey__id=survey_id)
