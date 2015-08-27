@@ -1,1 +1,1 @@
-web: gunicorn automated_survey.wsgi:application
+web: gunicorn twilio_sample_project.wsgi:application
