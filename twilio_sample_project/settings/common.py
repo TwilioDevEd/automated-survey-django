@@ -44,7 +44,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'automated_survey.urls'
+ROOT_URLCONF = 'twilio_sample_project.urls'
 
 TEMPLATES = [
     {
@@ -62,7 +62,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'automated_survey.wsgi.application'
+WSGI_APPLICATION = 'twilio_sample_project.wsgi.application'
 
 
 # Database
@@ -91,6 +91,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-STATIC_ROOT = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'

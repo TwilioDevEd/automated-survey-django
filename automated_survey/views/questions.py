@@ -1,32 +1,32 @@
-from django.views.generic import View
 from django.core.urlresolvers import reverse
 from twilio import twiml
 from django.http import HttpResponse
 
 from automated_survey.models import Question
 from automated_survey.views.common import parameters_for_survey_url
+from django.views.decorators.http import require_GET
 
-class QuestionView(View):
-    http_method_names = ['get']
 
-    def get(self, request, survey_id, question_id):
-        question = Question.objects.get(id=question_id)
+@require_GET
+def show_question(request, survey_id, question_id):
+    question = Question.objects.get(id=question_id)
 
-        url_parameters = parameters_for_survey_url(question.survey.id,
-                                                   question.id)
+    url_parameters = parameters_for_survey_url(question.survey.id,
+                                               question.id)
 
-        question_store_url = reverse('record-response', kwargs=url_parameters)
+    question_store_url = reverse('record_response', kwargs=url_parameters)
 
-        voice_response = twiml.Response()
-        voice_response.say(question.body)
-        voice_response.say(instructions[question.kind])
-        voice_response = attach_command_to_response(
-            voice_response, question.kind, question_store_url
-        )
+    voice_response = twiml.Response()
+    voice_response.say(question.body)
+    voice_response.say(instructions[question.kind])
+    voice_response = _attach_command_to_response(
+        voice_response, question.kind, question_store_url
+    )
 
-        return HttpResponse(voice_response, content_type='application/xml')
+    return HttpResponse(voice_response, content_type='application/xml')
 
-def attach_command_to_response(response, kind, action):
+
+def _attach_command_to_response(response, kind, action):
     if kind == 'voice':
         response.record(action=action + '?Kind=voice', method='POST')
     elif kind == 'numeric':

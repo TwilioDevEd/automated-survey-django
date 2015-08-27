@@ -17,7 +17,7 @@ class StoreQuestionResponseTest(TestCase):
                                  'question_id': self.question_one.id}
 
     def test_store_response(self):
-        question_store_url = reverse('record-response', kwargs=self.question_ids_one) + '?Kind=voice'
+        question_store_url = reverse('record_response', kwargs=self.question_ids_one) + '?Kind=voice'
 
         request_parameters = {
             'CallSid': 'somerandomuniqueid',
@@ -38,7 +38,7 @@ class StoreQuestionResponseTest(TestCase):
         question_ids_two = {'survey_id': self.survey.id,
                             'question_id': question_two.id}
 
-        question_store_url_one = reverse('record-response', kwargs=self.question_ids_one) + '?Kind=numeric'
+        question_store_url_one = reverse('record_response', kwargs=self.question_ids_one) + '?Kind=numeric'
         next_question_url = reverse('question', kwargs=question_ids_two)
 
         request_parameters = {
@@ -53,7 +53,7 @@ class StoreQuestionResponseTest(TestCase):
         assert next_question_url in response.url
 
     def test_validate_question_kind(self):
-        invalid_question_store_url = reverse('record-response', kwargs=self.question_ids_one) + '?Kind=lol'
+        invalid_question_store_url = reverse('record_response', kwargs=self.question_ids_one) + '?Kind=lol'
         request_parameters = {
             'CallSid': 'somerandomuniqueid',
             'From': '324238944',
@@ -63,7 +63,7 @@ class StoreQuestionResponseTest(TestCase):
             self.client.post(invalid_question_store_url, request_parameters)
 
     def test_last_question(self):
-        question_store_url_one = reverse('record-response', kwargs=self.question_ids_one) + '?Kind=numeric'
+        question_store_url_one = reverse('record_response', kwargs=self.question_ids_one) + '?Kind=numeric'
         request_parameters = {
             'CallSid': 'somerandomuniqueid',
             'From': '324238944',

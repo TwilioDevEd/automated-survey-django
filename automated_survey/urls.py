@@ -14,37 +14,34 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
-from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
 
 from automated_survey.views.surveys import redirect_to_first_survey
 from automated_survey.views.surveys import redirect_to_first_results
-from automated_survey.views.questions import QuestionView
+from automated_survey.views.questions import show_question
+from automated_survey.views.surveys import show_survey, show_survey_results
 from automated_survey.views.question_responses import QuestionResponseView
-from automated_survey.views.surveys import SurveyView, SurveyResultsView
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-
-    url(r'^$', redirect_to_first_results, name='app-root'),
+    url(r'^$', redirect_to_first_results, name='app_root'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)$',
-        QuestionView.as_view(),
+        show_question,
         name='question'),
 
     url(r'^survey/(?P<survey_id>\d+)$',
-        SurveyView.as_view(),
+        show_survey,
         name='survey'),
 
-    url(r'^first_survey/',
+    url(r'^first-survey/',
         csrf_exempt(redirect_to_first_survey),
-        name='first-survey'),
+        name='first_survey'),
 
     url(r'^survey/(?P<survey_id>\d+)/results$',
-        SurveyResultsView.as_view(),
-        name='survey-results'),
+        show_survey_results,
+        name='survey_results'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)/question_response$',
         csrf_exempt(QuestionResponseView.as_view()),
-        name='record-response')
+        name='record_response')
 ]

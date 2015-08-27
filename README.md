@@ -49,13 +49,15 @@ and open a number's configuration by clicking on it.
 ![Open a number configuration](https://raw.github.com/TwilioDevEd/automated-survey-django/master/images/number-conf.png)
 
 Next, edit the "Request URL" field under the "Voice" section and point
-it towards your ngrok-exposed application `/first_survey` route. Set
+it towards your ngrok-exposed application `/automated_survey/first_survey/` route. Set
 the HTTP method to POST. If you are trying the Heroku
 application you need to point Twilio to
-`http://<your-app-name>.herokuapp.com/first_survey`. See the image
+`http://<your-app-name>.herokuapp.com/automated_survey/first_survey/`. See the image
 below for an example:
 
 You can then visit the application at [http://localhost:8000/](http://localhost:8000/).
+
+Mind the trailing slash.
 
 ![Webhook configuration](https://raw.github.com/TwilioDevEd/automated-survey-django/master/images/webhook-conf.png)
 
@@ -64,6 +66,6 @@ You can then visit the application at [http://localhost:8000/](http://localhost:
 Configure your test database in `.env.test`. You can then run the tests locally using `py.test`
 
 ```
-$ py.test --cov
+$ py.test --cov=automated_survey
 ```
 
