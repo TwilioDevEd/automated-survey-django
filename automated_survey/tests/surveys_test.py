@@ -17,7 +17,7 @@ class SurveyRedirectionTest(TestCase):
     def test_show_survey(self):
         survey = Survey(title='A testing survey')
         survey.save()
-        Question(body='A Question', kind='voice', survey=survey).save()
+        Question(body='A Question', kind=Question.VOICE, survey=survey).save()
 
         response = self.client.get(reverse('survey', kwargs={'survey_id': survey.id}))
 
@@ -27,7 +27,7 @@ class SurveyRedirectionTest(TestCase):
         survey = Survey(title='A testing survey')
         survey.save()
 
-        question = Question(body='A Question', kind='voice', survey=survey)
+        question = Question(body='A Question', kind=Question.VOICE, survey=survey)
         question.save()
 
         question_ids = {'survey_id': survey.id, 'question_id': question.id}
@@ -44,7 +44,7 @@ class SurveyResultsTest(TestCase):
         survey = Survey(title='A testing survey')
         survey.save()
 
-        question_one = Question(body='Question one', kind='voice', survey=survey)
+        question_one = Question(body='Question one', kind=Question.VOICE, survey=survey)
         question_one.save()
 
         question_response = QuestionResponse(response='gopher://someaudio.mp3',

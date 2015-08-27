@@ -9,8 +9,18 @@ class Survey(models.Model):
 
 
 class Question(models.Model):
+    VOICE = 'voice'
+    YES_NO = 'yes-no'
+    NUMERIC = 'numeric'
+
+    QUESTION_KIND_CHOICES = (
+        (VOICE, 'Voice'),
+        (YES_NO, 'Yes or no'),
+        (NUMERIC, 'Numeric')
+    )
+
     body = models.CharField(max_length=255)
-    kind = models.CharField(max_length=255)
+    kind = models.CharField(max_length=255, choices=QUESTION_KIND_CHOICES)
     survey = models.ForeignKey(Survey)
 
     def __str__(self):
