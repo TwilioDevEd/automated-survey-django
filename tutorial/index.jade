@@ -1,5 +1,5 @@
 .chapter(data-title='Automated surveys with Twilio, TwiML and Django')
-  .step(data-file='.env.example')
+  .step(data-file='automated_survey/urls.py')
     :markdown
       ## What does the application do?
 
@@ -26,7 +26,7 @@
       * [TwiML Python Quickstart Tutorial](https://www.twilio.com/docs/quickstart/python/twiml)
       * [Twilio Python Helper Library](https://twilio-python.readthedocs.org/en/latest/)
 
-  .step(data-file='.env.example', data-highlight='5-6')
+  .step(data-file='.env.example')
     :markdown
       ## Configure the application
 
@@ -46,7 +46,7 @@
       * [Django settings documentation](https://docs.djangoproject.com/en/1.8/topics/settings/)
 
   .step(data-file='automated_survey/management/commands/load_survey.py',
-    data-highlight='7-19')
+    data-highlight='8-20')
     :markdown
       ## Create a survey
 
@@ -68,7 +68,7 @@
       *  [Django custom management commands](https://docs.djangoproject.com/en/1.8/howto/custom-management-commands/)
       *  [Django models](https://docs.djangoproject.com/en/1.8/topics/db/models/)
 
-  .step(data-file='automated_survey/views/surveys.py', data-highlight='57-61')
+  .step(data-file='automated_survey/views/surveys.py', data-highlight='43-48')
     :markdown
       ## Respond to a Phone Call
 
@@ -78,7 +78,7 @@
       URL configured under it.
 
       For this application Twilio should be configured to request
-      the application's `/first_survey` endpoint. Since our app only
+      the application's `/first_survey/` endpoint. Since our app only
       handles one survey, the endpoint will reply with a redirect to
       the location of the first survey it finds. The URL for this
       survey should look something like `/survey/<some_id>`. [Twilio
@@ -96,7 +96,7 @@
       * [TwiML Voice: Your Response](https://www.twilio.com/docs/api/twiml/your_response)
       * [Redirect with Django](https://docs.djangoproject.com/en/1.8/ref/request-response/#django.http.HttpResponseRedirect)
 
-  .step(data-file='automated_survey/views/surveys.py', data-highlight='13-28')
+  .step(data-file='automated_survey/views/surveys.py', data-highlight='24-40')
     :markdown
       ## Welcome the caller to the survey
 
@@ -118,7 +118,7 @@
       * [TwiML Voice: <Say>](https://www.twilio.com/docs/api/twiml/say)
       * [TwiML Voice: <Redirect>](https://www.twilio.com/docs/api/twiml/redirect)
 
-  .step(data-file='automated_survey/views/questions.py', data-highlight='12-27')
+  .step(data-file='automated_survey/views/questions.py', data-highlight='10-26')
     :markdown
       ## Ask the caller a question
 
@@ -151,7 +151,7 @@
       * [TwiML Voice: <Gather>](https://www.twilio.com/docs/api/twiml/gather)
       * [TwiML Voice: <Record>](https://www.twilio.com/docs/api/twiml/record)
 
-  .step(data-file='automated_survey/views/question_responses.py' data-highlight='15-21')
+  .step(data-file='automated_survey/views/question_responses.py' data-highlight='14-23')
     :markdown
       ## Store a question's answer
 
@@ -166,7 +166,7 @@
       Most surveys include more than a single question so we must now
       redirect the user to the next question in this survey.
 
-  .step(data-file='automated_survey/views/question_responses.py' data-highlight='36-48')
+  .step(data-file='automated_survey/views/question_responses.py' data-highlight='35-48')
     :markdown
       ## Redirect the user to the next question
 
@@ -188,9 +188,9 @@
       * [TwiML Voice: <Say>](https://www.twilio.com/docs/api/twiml/say)
       * [TwiML Voice: <Hangup>](https://www.twilio.com/docs/api/twiml/hangup)
 
-  .step(data-file='automated_survey/views/surveys.py', data-highlight='34-44')
+  .step(data-file='automated_survey/views/surveys.py', data-highlight='9-21')
     :markdown
-      ## Display the survey results
+      ## Display survey results
 
       Now we want a page where the survey’s author can see the
       responses to the survey.
