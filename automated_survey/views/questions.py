@@ -27,11 +27,11 @@ def show_question(request, survey_id, question_id):
 
 
 def _attach_command_to_response(response, kind, action):
-    if kind == 'voice':
+    if kind == Question.VOICE:
         response.record(action=action + '?Kind=voice', method='POST')
-    elif kind == 'numeric':
+    elif kind == Question.NUMERIC:
         response.gather(action=action + '?Kind=numeric', method='POST')
-    elif kind == 'yes-no':
+    elif kind == Question.YES_NO:
         response.gather(action=action + '?Kind=yes-no', method='POST')
     else:
         raise NoSuchVerbException('%s is not a supported question type' % kind)

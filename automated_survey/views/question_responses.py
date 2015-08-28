@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from twilio import twiml
 
-from automated_survey.models import Survey, QuestionResponse
+from automated_survey.models import Survey, QuestionResponse, Question
 from automated_survey.views.common import parameters_for_survey_url
 
 
@@ -56,9 +56,9 @@ class QuestionResponseView(View):
         return list(next_questions)[0]
 
     def _question_response_content(self, request, question_kind):
-        if question_kind in ['yes-no', 'numeric']:
+        if question_kind in [Question.YES_NO, Question.NUMERIC]:
             return request.POST['Digits']
-        elif question_kind == 'voice':
+        elif question_kind == Question.VOICE:
             return request.POST['RecordingUrl']
         else:
             raise NoSuchQuestionKindException
