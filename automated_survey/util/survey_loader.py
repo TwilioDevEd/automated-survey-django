@@ -10,7 +10,11 @@ class SurveyLoader(object):
     def load_survey(self):
         survey = json.loads(self.survey_content)
         new_survey = Survey(title=survey['title'])
-        questions = map(lambda q: Question(body=q['body'], kind=q['kind']), survey['questions'])
+        questions = map(
+            lambda q: Question(
+                body=q['body'],
+                kind=q['kind']),
+            survey['questions'])
 
         new_survey.save()
         new_survey.question_set.add(*questions)
