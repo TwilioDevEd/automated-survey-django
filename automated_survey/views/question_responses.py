@@ -27,8 +27,10 @@ class QuestionResponseView(View):
         (call_sid, phone_number) = (request.POST['CallSid'],
                                     request.POST['From'])
 
-        new_response = QuestionResponse(call_sid=call_sid, phone_number=phone_number)
-        new_response.response = self._question_response_content(request, question_kind)
+        new_response = QuestionResponse(
+            call_sid=call_sid, phone_number=phone_number)
+        new_response.response = self._question_response_content(
+            request, question_kind)
 
         return new_response
 
@@ -38,7 +40,8 @@ class QuestionResponseView(View):
         except IndexError:
             return self._goodbye_message()
 
-        url_parameters = parameters_for_survey_url(next_question.survey_id, next_question.id)
+        url_parameters = parameters_for_survey_url(
+            next_question.survey_id, next_question.id)
         next_question_url = reverse('question', kwargs=url_parameters)
 
         see_other = redirect(next_question_url)
@@ -75,5 +78,3 @@ class QuestionResponseView(View):
 
 class NoSuchQuestionKindException(Exception):
     pass
-
-

@@ -27,14 +27,16 @@ def show_survey(request, survey_id):
     first_question = Question.objects.order_by('id').first()
 
     first_question_ids = {
-        'survey_id':   survey.id,
+        'survey_id': survey.id,
         'question_id': first_question.id
     }
 
     first_question_url = reverse('question', kwargs=first_question_ids)
     voice_response = twiml.Response()
 
-    voice_response.say('Hello and thank you for taking the %s survey' % survey.title)
+    voice_response.say(
+        'Hello and thank you for taking the %s survey' %
+        survey.title)
     voice_response.redirect(first_question_url, method='GET')
 
     return HttpResponse(voice_response, content_type='application/xml')
@@ -51,7 +53,9 @@ def redirect_to_first_survey(request):
 @require_GET
 def redirect_to_first_results(request):
     first_survey = Survey.objects.first()
-    results_for_first_survey = reverse('survey_results', kwargs={'survey_id': first_survey.id})
+    results_for_first_survey = reverse(
+        'survey_results', kwargs={
+            'survey_id': first_survey.id})
     return HttpResponseRedirect(results_for_first_survey)
 
 
