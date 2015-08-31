@@ -1,5 +1,5 @@
-.chapter(data-title='Automated surveys')
-  .step(data-file='automated_survey/views/questions.py', data-highlight='10-26')
+.chapter(data-title='Automated Survey')
+  .step(data-file='automated_survey/models.py')
     :markdown
       ## What does this thing do?
 
@@ -27,7 +27,11 @@
 
       Our `Survey` and `Question` models store the content of the surveys our
       users will hear when they call our Twilio number. A survey can have
-      multiple questions, and we support three different kinds of questions.
+      multiple questions, and we support three different kinds of responses:
+
+      - `VOICE`: Records an audio response from the caller
+      - `YES_NO`: Uses the 1 key for 'yes' or the 0 key for 'no'
+      - `NUMERIC`: Uses a 1-10 rating scale
 
       Our application comes with a sample survey for you to try about
       [bears, beets, and Battlestar Galactica](https://www.youtube.com/watch?v=WaaANll8h18).
@@ -76,6 +80,7 @@
 
       **See Also:**
 
+      * [Creating TwiML with twilio-python](https://twilio-python.readthedocs.org/en/latest/usage/twiml.html)
       * [TwiML Voice: Your Response](https://www.twilio.com/docs/api/twiml/your_response)
 
   .step(data-file='automated_survey/views/questions.py', data-highlight='10-39')
@@ -114,23 +119,42 @@
 
       * [TwiML Voice: Twilio's Request](https://www.twilio.com/docs/api/twiml/twilio_request)
 
-  .step(data-file='automated_survey/views/question_responses.py' data-highlight='45-76')
+  .step(data-file='automated_survey/views/question_responses.py' data-highlight='45-67')
     :markdown
       ## Redirect the user to the next question
 
       After we record the caller's response, we redirect Twilio to get TwiML for
       the next question.
 
-      Using a helper method, we find the next `Question` object for our survey.
-      If there isn't one, we end the survey with some TwiML for a "goodbye"
-      message for the caller.
+      In a helper method, we use the Django ORM to get the set of questions for
+      this survey and find the next one based on the current question's `id` field.
+
+      Using these methods, our caller will progress through each question in
+      the survey until they've answered them all. Then we wrap up the survey -
+      let's look at that next.
 
       ---
 
       **See Also:** 
 
-      * [TwiML Voice: <Hangup>](https://www.twilio.com/docs/api/twiml/hangup)
+      * [Django related objects](https://docs.djangoproject.com/en/1.8/topics/db/queries/#related-objects)
       * [Django reverse](https://docs.djangoproject.com/en/1.8/ref/urlresolvers/#reverse)
+
+  .step(data-file='automated_survey/views/question_responses.py' data-highlight='69-76')
+    :markdown
+      ## End the survey
+
+      When we can't find another question for a caller to answer, we end the
+      survey with this code.
+
+      After thanking the caller for taking the survey, the `<Hangup>` TwiML verb
+      ends the call.
+
+      ---
+
+      **See Also:**
+
+      * [TwiML Voice: <Hangup>](https://www.twilio.com/docs/api/twiml/hangup)
 
   .step(data-file='automated_survey/views/surveys.py', data-highlight='10-21')
     :markdown
