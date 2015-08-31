@@ -34,6 +34,14 @@ class QuestionResponseView(View):
 
         return new_response
 
+    def _question_response_content(self, request, question_kind):
+        if question_kind in [Question.YES_NO, Question.NUMERIC]:
+            return request.POST['Digits']
+        elif question_kind == Question.VOICE:
+            return request.POST['RecordingUrl']
+        else:
+            raise NoSuchQuestionKindException
+
     def _redirect_for_next_question(self, survey_id, question_id):
         try:
             next_question = self._next_question(survey_id, question_id)
@@ -57,14 +65,6 @@ class QuestionResponseView(View):
         next_questions = filter(lambda q: q.id > int(question_id), questions)
 
         return list(next_questions)[0]
-
-    def _question_response_content(self, request, question_kind):
-        if question_kind in [Question.YES_NO, Question.NUMERIC]:
-            return request.POST['Digits']
-        elif question_kind == Question.VOICE:
-            return request.POST['RecordingUrl']
-        else:
-            raise NoSuchQuestionKindException
 
     def _goodbye_message(self):
         voice_response = twiml.Response()
