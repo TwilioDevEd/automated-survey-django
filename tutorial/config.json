@@ -1,6 +1,6 @@
 {
-    "title": "Automated surveys with Django",
+    "title": "Automated Survey",
     "repo": "TwilioDevEd/automated-survey-django",
-    "description": "Learn how to leverage the Twilio API and TwiML to conduct automated phone surveys.",
+    "description": "Instantly collect structured data from your users with a survey conducted over a voice call or SMS text messages. Let's get started!",
     "heroku": true
 }

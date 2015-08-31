@@ -1,208 +1,152 @@
-.chapter(data-title='Automated surveys with Twilio, TwiML and Django')
-  .step(data-file='automated_survey/urls.py')
+.chapter(data-title='Automated surveys')
+  .step(data-file='automated_survey/views/questions.py', data-highlight='10-26')
     :markdown
-      ## What does the application do?
+      ## What does this thing do?
 
-      This [Django 1.8](https://www.djangoproject.com/) sample
-      application demonstrates using Twilio and
-      [TwiML](https://www.twilio.com/docs/api/twiml) to deliver a
-      survey that can be completed via voice call. The survey
-      actually works via SMS text messages, too, but we're going to
-      focus on the looping logic necessary to conduct an interview
-      over the phone. In this tutorial, we'll highlight the code
-      that interacts with Twilio and in turn makes the application
-      tick. To run this sample app yourself, [download the code and
-      follow the instructions on
-      GitHub](https://github.com/TwilioDevEd/automated-survey-django). Let's
-      get started! Click the right arrow above to move to the next
+      This [Django](https://www.djangoproject.com/) web application
+      shows how you can use Twilio to conduct a survey over a phone call.
+
+      In this tutorial, we'll point out the key bits of code that make this
+      application work. [Check out the project README on GitHub](https://github.com/TwilioDevEd/automated-survey-django)
+      to see how to run the code yourself.
+
+      Let's get started! Click the right arrow above to move to the next
       step of the tutorial.
 
       ---
 
       **See also**
 
-      * [Get started with Django](https://www.djangoproject.com/start/)
-      * [Django API reference](https://docs.djangoproject.com/en/1.8/ref/)
-      * [TwiML Python Quickstart Tutorial](https://www.twilio.com/docs/quickstart/python/twiml)
       * [Twilio Python Helper Library](https://twilio-python.readthedocs.org/en/latest/)
+      * [TwiML Python Quickstart Tutorial](https://www.twilio.com/docs/quickstart/python/twiml)
+      * [Django docs](https://docs.djangoproject.com/en/1.8/ref/)
 
-  .step(data-file='.env.example')
+  .step(data-file='automated_survey/models.py', data-highlight='1-27')
     :markdown
-      ## Configure the application
+      ## The Survey and Question models
 
-      The application only requires a database to store the results
-      of surveys. Rename `.env.example` to `.env` and customize to
-      match your needs. You can find more details on how to setup
-      the application in the [README
-      file](https://github.com/TwilioDevEd/automated-survey-django/blob/master/README.md). Now
-      that we have configured a database it’s time to load some
-      survey data in it. All configuration is stored in the
-      environment.
+      Our `Survey` and `Question` models store the content of the surveys our
+      users will hear when they call our Twilio number. A survey can have
+      multiple questions, and we support three different kinds of questions.
+
+      Our application comes with a sample survey for you to try about
+      [bears, beets, and Battlestar Galactica](https://www.youtube.com/watch?v=WaaANll8h18).
 
       ---
 
-      **See Also:**
-      * [Django-environ documentation](https://django-environ.readthedocs.org/en/latest/)
-      * [Django settings documentation](https://docs.djangoproject.com/en/1.8/topics/settings/)
+      **See also**
 
-  .step(data-file='automated_survey/management/commands/load_survey.py',
-    data-highlight='8-20')
-    :markdown
-      ## Create a survey
+      * [Django models](https://docs.djangoproject.com/en/1.8/topics/db/models/)
+      * [Django choices model attribute](https://docs.djangoproject.com/en/1.8/ref/models/fields/#choices)
 
-      If we want to conduct automated surveys we will first need
-      some questions. For your convenience, the application’s
-      repository includes a [sample
-      survey](https://github.com/TwilioDevEd/automated-survey-django/blob/master/bear_survey.json)
-      you can load through `manage.py` using the also included
-      `load_survey` command. You can of course write your own survey
-      following the same format.
-
-      We want users to take our survey, so next we’re going to
-      implement the webhooks Twilio will call when it receives a
-      call.
-
-      ---
-
-      **See Also:**
-      *  [Django custom management commands](https://docs.djangoproject.com/en/1.8/howto/custom-management-commands/)
-      *  [Django models](https://docs.djangoproject.com/en/1.8/topics/db/models/)
-
-  .step(data-file='automated_survey/views/surveys.py', data-highlight='43-48')
+  .step(data-file='automated_survey/views/surveys.py', data-highlight='45-50')
     :markdown
       ## Respond to a Phone Call
 
-      Whenever one of [your Twilio phone
-      numbers](https://www.twilio.com/user/account/phone-numbers/incoming)
-      receives a call, Twilio will make an HTTP request to the voice
-      URL configured under it.
+      Whenever someone calls our Twilio number, Twilio will send a POST request
+      to the URL you configured when you bought that number. For this app, that
+      URL should be `/automated-survey/first-survey/`.
 
-      For this application Twilio should be configured to request
-      the application's `/first_survey/` endpoint. Since our app only
-      handles one survey, the endpoint will reply with a redirect to
-      the location of the first survey it finds. The URL for this
-      survey should look something like `/survey/<some_id>`. [Twilio
-      is a well-behaved HTTP
-      client](https://www.twilio.com/docs/api/twiml/your_response)
-      and will follow the redirect and thus make another
-      request. Next we will handle the request made after the
-      redirect.
-
-      Next we will handle the request made after the redirect.
+      Our app begins the call by finding the first `Survey` in our database
+      and redirecting to a view that will begin the survey for our caller.
+      Let's look at that view next.
 
       ---
 
       **See Also:**
-      * [TwiML Voice: Your Response](https://www.twilio.com/docs/api/twiml/your_response)
-      * [Redirect with Django](https://docs.djangoproject.com/en/1.8/ref/request-response/#django.http.HttpResponseRedirect)
 
-  .step(data-file='automated_survey/views/surveys.py', data-highlight='24-40')
+      * [Twilio is a well-behaved HTTP client](https://www.twilio.com/docs/api/twiml/your_response)
+      * [Django HttpResponseRedirect](https://docs.djangoproject.com/en/1.8/ref/request-response/#django.http.HttpResponseRedirect)
+
+  .step(data-file='automated_survey/views/surveys.py', data-highlight='24-42')
     :markdown
       ## Welcome the caller to the survey
 
-      Before we get started we want to welcome the user to our survey
-      system using the
-      [`<Say>`](https://www.twilio.com/docs/api/twiml/say) verb. After
-      serving the welcome message, we will redirect Twilio to the
-      first question using the
-      [`<Redirect>`](https://www.twilio.com/docs/api/twiml/redirect)
-      verb. The contents of the latter tag must be the URL of the
-      first question in the survey.
+      The way you tell Twilio how to respond to incoming phone calls is by
+      using [TwiML](https://www.twilio.com/docs/api/twiml).
 
-      Now the caller is about to listen to the first question
+      Our first TwiML response welcomes the caller to the survey. We
+      use the [`<Say>`](https://www.twilio.com/docs/api/twiml/say) verb to have
+      Twilio read the caller our welcome message. The
+      [`<Redirect>`](https://www.twilio.com/docs/api/twiml/redirect) verb tells
+      Twilio where to find the next TwiML instructions - in our case, a URL
+      for the first question.
 
       ---
 
       **See Also:**
-      * [TwiML Voice: Your Response](https://www.twilio.com/docs/api/twiml/your_response)
-      * [TwiML Voice: <Say>](https://www.twilio.com/docs/api/twiml/say)
-      * [TwiML Voice: <Redirect>](https://www.twilio.com/docs/api/twiml/redirect)
 
-  .step(data-file='automated_survey/views/questions.py', data-highlight='10-26')
+      * [TwiML Voice: Your Response](https://www.twilio.com/docs/api/twiml/your_response)
+
+  .step(data-file='automated_survey/views/questions.py', data-highlight='10-39')
     :markdown
       ## Ask the caller a question
 
-      Asking the question is pretty straightforward, but we also
-      need to record the response.
+      For each question in the survey, we build a TwiML response to tell Twilio
+      how to ask the question.
 
-      Recording the answer is slightly more involved. If the
-      question is of kind "voice" then we use the
-      [`<Record>`](https://www.twilio.com/docs/api/twiml/record)
-      verb. However, if we expect dialpad input we use the the
-      [`<Gather>`](https://www.twilio.com/docs/api/twiml/gather)
-      verb. Both verbs take an `action` attribute and a `method`
-      attribute. Twilio's client will use both attributes to make a
-      request we can use to store the caller's answer to the
-      question.
+      We use [`<Say>`](https://www.twilio.com/docs/api/twiml/say) again to read
+      the question and some instructions for how the caller should answer. The
+      last part of our TwiML depends on what kind of question we're asking,
+      using either a [`<Record>`](https://www.twilio.com/docs/api/twiml/record)
+      or [`<Gather>`](https://www.twilio.com/docs/api/twiml/gather) verb.
 
-      The `action` URL will be
-      `/question/<question_id>/question_response` for both TwiML
-      verbs. We also include a `?Kind=<question kind>` URL parameter
-      so we can identify the question kind before we store it in the
-      database. This is the application endpoint that should store
-      the response to a question
+      The `action` argument of those verbs is the URL in our application where
+      we want to receive the caller's answer. Let's look at that view next.
 
-      Now that the caller has answered our question we want to store
-      her answer.'
+  .step(data-file='automated_survey/views/question_responses.py' data-highlight='11-43')
+    :markdown
+      ## Store a caller's answer to a question
+
+      When the caller finishes answering a question, Twilio will make a
+      POST request to this view.
+
+      In a helper method we create a new `QuestionResponse` object using the
+      POST data of Twilio's request to store some data about the call.
+
+      We use another helper method to set the `response` attribute on that
+      object with the caller's answer to the question. Depending on the kind of
+      question, we use the POST data's `Digits` or `RecordingUrl` key.
 
       ---
 
-      **See Also:**
-      * [TwiML Voice: <Gather>](https://www.twilio.com/docs/api/twiml/gather)
-      * [TwiML Voice: <Record>](https://www.twilio.com/docs/api/twiml/record)
+      **See also**
 
-  .step(data-file='automated_survey/views/question_responses.py' data-highlight='14-23')
-    :markdown
-      ## Store a question's answer
+      * [TwiML Voice: Twilio's Request](https://www.twilio.com/docs/api/twiml/twilio_request)
 
-      When the caller has finished entering her response, Twilio will make a
-      request to this controller including all the [call
-      parameters](https://www.twilio.com/docs/api/twiml/twilio_request) we
-      will need . For this sample application we will store the
-      `RecordingUrl` or `Digits` parameter for voice and yes-no/numeric
-      answers accordingly. For this sample we will also save the `CallSid`
-      so we can uniquely identify a call.
-
-      Most surveys include more than a single question so we must now
-      redirect the user to the next question in this survey.
-
-  .step(data-file='automated_survey/views/question_responses.py' data-highlight='35-48')
+  .step(data-file='automated_survey/views/question_responses.py' data-highlight='45-76')
     :markdown
       ## Redirect the user to the next question
 
-      Now we need to locate the next question. This is rather
-      straightfoward since we have the same request as in the previous
-      step therefore we have access to the same information. We merely need
-      to find the question after the current one and reply with a
-      redirect with the next question's URL as the target.
+      After we record the caller's response, we redirect Twilio to get TwiML for
+      the next question.
 
-      However, we need to handle the case where there's no next
-      question. In this case we simply say "good-bye" and hangup.
-
-      The application's users might want to see the answers to their
-      survey so we're implementing that next.
+      Using a helper method, we find the next `Question` object for our survey.
+      If there isn't one, we end the survey with some TwiML for a "goodbye"
+      message for the caller.
 
       ---
 
       **See Also:** 
-      * [TwiML Voice: <Say>](https://www.twilio.com/docs/api/twiml/say)
-      * [TwiML Voice: <Hangup>](https://www.twilio.com/docs/api/twiml/hangup)
 
-  .step(data-file='automated_survey/views/surveys.py', data-highlight='9-21')
+      * [TwiML Voice: <Hangup>](https://www.twilio.com/docs/api/twiml/hangup)
+      * [Django reverse](https://docs.djangoproject.com/en/1.8/ref/urlresolvers/#reverse)
+
+  .step(data-file='automated_survey/views/surveys.py', data-highlight='10-21')
     :markdown
       ## Display survey results
 
-      Now we want a page where the survey’s author can see the
-      responses to the survey.
+      The last part of our application is a web interface for the survey author
+      to review the responses.
 
-      For this route we simply query the database through an ORM query
-      and then display the information within a Django template. We
-      display a panel for every individual call. It's worth mentioning
-      we also redirect the application's root route to this route.
+      This view uses the Django ORM to get all the `QuestionResponse` objects
+      for a survey and renders them in template. We use HTML5 `<audio>` tags to
+      play recorded responses.
 
       ---
 
       **See Also:**
+
       * [Django queries](https://docs.djangoproject.com/en/1.8/topics/db/queries/)
       * [Django queries that span relationships](https://docs.djangoproject.com/en/1.8/topics/db/queries/#lookups-that-span-relationships)
       * [Django templates](https://docs.djangoproject.com/en/1.8/topics/templates/)
@@ -210,24 +154,25 @@
   .step
     :markdown
       ## Where to next?
-      It's done! If you have configured one of your voice-enable Twilio
-      numbers to the application built in this tutorial you should be able
-      to take the survey and see the results under root route of the
-      application. We hope you found this sample application useful. If
-      you're a Python developer working with Twilio, you might enjoy these
-      other tutorials:
 
-      [Appointment
-      reminders](https://www.twilio.com/docs/howto/walkthrough/appointment-reminders/python/django):
-      Learn to implement appointment reminders in your web app with
-      Twilio. Appointment reminders allow you to automate the process of
-      reaching out to your customers in advance of an upcoming appointment.
+      That's it! Our Django application can now administer surveys to people who
+      call our Twilio number, and survey authors can view the results on the
+      web.
 
-      [Two factor authentication with
-      Flask](https://www.twilio.com/docs/howto/walkthrough/two-factor-authentication/python/flask):
-      earn to implement two-factor authentication (2FA) in your web app with
-      Twilio-powered Authy. 2FA helps further secure your users' data by
-      validating more than just a password. ''
+      If you're a Python developer working with Twilio, you might also enjoy
+      these tutorials:
+
+      [**Click-To-Call (Flask)**](https://www.twilio.com/docs/howto/walkthrough/click-to-call/python/flask)
+
+      Put a button on your web page that connects visitors to live support or
+      sales people via telephone.
+
+      [**Call Tracking (Django)**](https://www.twilio.com/docs/howto/walkthrough/call-tracking/python/django)
+
+      Measure the effectiveness of different marketing campaigns. By assigning
+      a unique phone number to different advertisements, you can track which
+      ones have the best call rates and get some data about the callers
+      themselves.
 
       ### Did this help?
 
