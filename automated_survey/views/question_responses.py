@@ -13,7 +13,8 @@ class QuestionResponseView(View):
 
     def post(self, request, survey_id, question_id):
         question_kind = request.GET.get('Kind')
-        if question_kind not in ['yes-no', 'numeric', 'voice']:
+        if question_kind not in [Question.YES_NO, Question.NUMERIC,
+                                 Question.VOICE]:
             raise NoSuchQuestionKindException
 
         new_response = self._question_response_from_request(request)
