@@ -12,41 +12,31 @@ class QuestionResponseView(View):
     http_method_names = ['post']
 
     def post(self, request, survey_id, question_id):
+        self._save_response(request, question_id)
+        return self._redirect_to_next_question(survey_id, question_id)
+
+    def _save_response(self, request, question_id):
+        QuestionResponse(
+            call_sid=request.POST['CallSid'],
+            phone_number=request.POST['From'],
+            response=self._extract_content(request),
+            question_id=question_id).save()
+
+    def _extract_content(self, request):
         question_kind = request.GET.get('Kind')
-        if question_kind not in [Question.YES_NO, Question.NUMERIC,
-                                 Question.TEXT]:
-            raise NoSuchQuestionKindException
+        self._validate_question_kind(question_kind)
 
-        new_response = self._question_response_from_request(request)
-        new_response.question_id = question_id
-        new_response.save()
-
-        return self._redirect_for_next_question(survey_id, question_id)
-
-    def _question_response_from_request(self, request):
-        question_kind = request.GET.get('Kind')
-        (call_sid, phone_number) = (request.POST['CallSid'],
-                                    request.POST['From'])
-
-        new_response = QuestionResponse(
-            call_sid=call_sid, phone_number=phone_number)
-        new_response.response = self._question_response_content(
-            request, question_kind)
-
-        return new_response
-
-    def _question_response_content(self, request, question_kind):
         if question_kind in [Question.YES_NO, Question.NUMERIC]:
             return request.POST['Digits']
-        elif question_kind == Question.TEXT:
-            return request.POST['RecordingUrl']
-        else:
+        return request.POST['RecordingUrl']
+
+    def _validate_question_kind(self, kind):
+        if not Question.is_valid_kind(kind):
             raise NoSuchQuestionKindException
 
-    def _redirect_for_next_question(self, survey_id, question_id):
-        try:
-            next_question = self._next_question(survey_id, question_id)
-        except IndexError:
+    def _redirect_to_next_question(self, survey_id, question_id):
+        next_question = self._next_question(survey_id, question_id)
+        if not next_question:
             return self._goodbye_message()
 
         url_parameters = parameters_for_survey_url(
@@ -62,10 +52,10 @@ class QuestionResponseView(View):
     def _next_question(self, survey_id, question_id):
         survey = Survey.objects.get(id=survey_id)
 
-        questions = survey.question_set.order_by('id')
-        next_questions = filter(lambda q: q.id > int(question_id), questions)
+        next_questions = \
+            survey.question_set.order_by('id').filter(id__gt=question_id)
 
-        return list(next_questions)[0]
+        return next_questions[0] if next_questions else None
 
     def _goodbye_message(self):
         text_response = twiml.Response()

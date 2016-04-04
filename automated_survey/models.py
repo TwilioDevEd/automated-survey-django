@@ -23,6 +23,10 @@ class Question(models.Model):
     kind = models.CharField(max_length=255, choices=QUESTION_KIND_CHOICES)
     survey = models.ForeignKey(Survey)
 
+    @classmethod
+    def is_valid_kind(cls, kind):
+        return kind in [cls.YES_NO, cls.NUMERIC, cls.TEXT]
+
     def __str__(self):
         return '%s' % self.body
 
