@@ -12,30 +12,14 @@ class QuestionResponseView(View):
     http_method_names = ['post']
 
     def post(self, request, survey_id, question_id):
-        self._save_response(request, question_id)
-        return self._redirect_to_next_question(survey_id, question_id)
+        question = Question.objects.get(id=question_id)
+        response = QuestionResponse.from_twilio_request(request)
+        response.question = question
+        response.save()
+        return self._redirect_to_next_question(question)
 
-    def _save_response(self, request, question_id):
-        QuestionResponse(
-            call_sid=request.POST['CallSid'],
-            phone_number=request.POST['From'],
-            response=self._extract_content(request),
-            question_id=question_id).save()
-
-    def _extract_content(self, request):
-        question_kind = request.GET.get('Kind')
-        self._validate_question_kind(question_kind)
-
-        if question_kind in [Question.YES_NO, Question.NUMERIC]:
-            return request.POST['Digits']
-        return request.POST['RecordingUrl']
-
-    def _validate_question_kind(self, kind):
-        if not Question.is_valid_kind(kind):
-            raise NoSuchQuestionKindException
-
-    def _redirect_to_next_question(self, survey_id, question_id):
-        next_question = self._next_question(survey_id, question_id)
+    def _redirect_to_next_question(self, question):
+        next_question = self._next_question(question)
         if not next_question:
             return self._goodbye_message()
 
@@ -49,11 +33,11 @@ class QuestionResponseView(View):
 
         return see_other
 
-    def _next_question(self, survey_id, question_id):
-        survey = Survey.objects.get(id=survey_id)
+    def _next_question(self, question):
+        survey = Survey.objects.get(id=question.survey_id)
 
         next_questions = \
-            survey.question_set.order_by('id').filter(id__gt=question_id)
+            survey.question_set.order_by('id').filter(id__gt=question.id)
 
         return next_questions[0] if next_questions else None
 
@@ -65,7 +49,3 @@ class QuestionResponseView(View):
         text_response.hangup()
 
         return HttpResponse(text_response)
-
-
-class NoSuchQuestionKindException(Exception):
-    pass

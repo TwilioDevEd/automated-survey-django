@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Survey(models.Model):
@@ -24,8 +25,17 @@ class Question(models.Model):
     survey = models.ForeignKey(Survey)
 
     @classmethod
-    def is_valid_kind(cls, kind):
-        return kind in [cls.YES_NO, cls.NUMERIC, cls.TEXT]
+    def validate_kind(cls, kind):
+        if kind not in [cls.YES_NO, cls.NUMERIC, cls.TEXT]:
+            raise ValidationError("Invalid question kind")
+
+    def _next_question(self):
+        survey = Survey.objects.get(id=self.survey_id)
+
+        next_questions = \
+            survey.question_set.order_by('id').filter(id__gt=self.id)
+
+        return next_questions[0] if next_questions else None
 
     def __str__(self):
         return '%s' % self.body
@@ -36,6 +46,19 @@ class QuestionResponse(models.Model):
     call_sid = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
     question = models.ForeignKey(Question)
+
+    @classmethod
+    def from_twilio_request(cls, request):
+        return cls(call_sid=request.POST['CallSid'],
+                   phone_number=request.POST['From'],
+                   response=cls._extract_content(request))
+
+    def _extract_content(request):
+        question_kind = request.GET.get('Kind')
+        Question.validate_kind(question_kind)
+        if question_kind in [Question.YES_NO, Question.NUMERIC]:
+            return request.POST['Digits']
+        return request.POST['RecordingUrl']
 
     def __str__(self):
         return '%s' % self.response

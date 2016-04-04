@@ -1,7 +1,7 @@
 import pytest
 from django.test import TestCase
 from automated_survey.models import Survey, Question, QuestionResponse
-from automated_survey.views.question_responses import NoSuchQuestionKindException
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 
 
@@ -59,7 +59,7 @@ class StoreQuestionResponseTest(TestCase):
             'From': '324238944',
             'Digits': '4'
         }
-        with pytest.raises(NoSuchQuestionKindException):
+        with pytest.raises(ValidationError):
             self.client.post(invalid_question_store_url, request_parameters)
 
     def test_last_question(self):
