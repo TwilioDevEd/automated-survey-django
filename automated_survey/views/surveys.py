@@ -1,6 +1,5 @@
 from automated_survey.models import Survey, Question, QuestionResponse
 from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic import View
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.views.decorators.http import require_POST, require_GET
@@ -32,14 +31,14 @@ def show_survey(request, survey_id):
     }
 
     first_question_url = reverse('question', kwargs=first_question_ids)
-    voice_response = twiml.Response()
+    text_response = twiml.Response()
 
-    voice_response.say(
+    text_response.say(
         'Hello and thank you for taking the %s survey' %
         survey.title)
-    voice_response.redirect(first_question_url, method='GET')
+    text_response.redirect(first_question_url, method='GET')
 
-    return HttpResponse(voice_response, content_type='application/xml')
+    return HttpResponse(text_response, content_type='application/xml')
 
 
 @require_POST

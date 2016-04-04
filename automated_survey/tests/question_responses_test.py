@@ -11,13 +11,13 @@ class StoreQuestionResponseTest(TestCase):
         self.survey = Survey(title='A testing survey')
         self.survey.save()
 
-        self.question_one = Question(body='Question one', kind=Question.VOICE, survey=self.survey)
+        self.question_one = Question(body='Question one', kind=Question.TEXT, survey=self.survey)
         self.question_one.save()
         self.question_ids_one = {'survey_id': self.survey.id,
                                  'question_id': self.question_one.id}
 
     def test_store_response(self):
-        question_store_url = reverse('record_response', kwargs=self.question_ids_one) + '?Kind=voice'
+        question_store_url = reverse('record_response', kwargs=self.question_ids_one) + '?Kind=text'
 
         request_parameters = {
             'CallSid': 'somerandomuniqueid',
@@ -33,7 +33,7 @@ class StoreQuestionResponseTest(TestCase):
         assert new_response.response == 'gopher://recording.mp3'
 
     def test_store_response_and_redirect(self):
-        question_two = Question(body='Question two', kind=Question.VOICE, survey=self.survey)
+        question_two = Question(body='Question two', kind=Question.TEXT, survey=self.survey)
         question_two.save()
         question_ids_two = {'survey_id': self.survey.id,
                             'question_id': question_two.id}

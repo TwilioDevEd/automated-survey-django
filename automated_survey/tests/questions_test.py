@@ -9,22 +9,22 @@ class ShowQuestionTest(TestCase):
         self.survey = Survey(title='A testing survey')
         self.survey.save()
 
-        self.question = Question(body='A Question', kind=Question.VOICE, survey=self.survey)
+        self.question = Question(body='A Question', kind=Question.TEXT, survey=self.survey)
         self.question.save()
 
         self.question_ids = {'survey_id': self.survey.id, 'question_id': self.question.id}
 
-    def test_show_voice_question(self):
+    def test_show_text_question(self):
         question_store_url = reverse('question', kwargs=self.question_ids)
 
-        self.question.kind = Question.VOICE
+        self.question.kind = Question.TEXT
         self.question.save()
 
-        voice_response = self.client.get(reverse('question', kwargs=self.question_ids))
+        text_response = self.client.get(reverse('question', kwargs=self.question_ids))
 
-        assert self.question.body in voice_response.content.decode('utf8')
-        assert 'Record' in voice_response.content.decode('utf8')
-        assert question_store_url in voice_response.content.decode('utf8')
+        assert self.question.body in text_response.content.decode('utf8')
+        assert 'Record' in text_response.content.decode('utf8')
+        assert question_store_url in text_response.content.decode('utf8')
 
     def test_show_numeric_question(self):
         self.question.kind = Question.NUMERIC

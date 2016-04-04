@@ -9,12 +9,12 @@ class Survey(models.Model):
 
 
 class Question(models.Model):
-    VOICE = 'voice'
+    TEXT = 'text'
     YES_NO = 'yes-no'
     NUMERIC = 'numeric'
 
     QUESTION_KIND_CHOICES = (
-        (VOICE, 'Voice'),
+        (TEXT, 'Text'),
         (YES_NO, 'Yes or no'),
         (NUMERIC, 'Numeric')
     )

@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='question',
             name='kind',
-            field=models.CharField(choices=[('voice', 'Voice'), ('yes-no', 'Yes or no'), ('numeric', 'Numeric')], max_length=255),
+            field=models.CharField(choices=[('text', 'Text'), ('yes-no', 'Yes or no'), ('numeric', 'Numeric')], max_length=255),
         ),
     ]

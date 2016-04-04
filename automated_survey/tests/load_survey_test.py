@@ -5,11 +5,11 @@ from automated_survey.util.survey_loader import SurveyLoader
 from django.test import TestCase
 
 sample_survey = """
-{\"questions\":[{\"body\":\"What type of bear is best?\",\"kind\":\"voice\"},{\"body\":\"In a scale of 1 to 10, how cute do you find koalas?\",\"kind\":\"numeric\"},{\"body\":\"Do you think bears beat beets?\",\"kind\":\"yes-no\"},{\"body\":\"What's the relationship between Battlestar Galactica and bears?\",\"kind\":\"voice\"},{\"body\":\"Do sloths qualify as bears?\",\"kind\":\"voice\"}],\"title\":\"About bears\"}\"'\"}\"\"]\"\"}
+{\"questions\":[{\"body\":\"What type of bear is best?\",\"kind\":\"text\"},{\"body\":\"In a scale of 1 to 10, how cute do you find koalas?\",\"kind\":\"numeric\"},{\"body\":\"Do you think bears beat beets?\",\"kind\":\"yes-no\"},{\"body\":\"What's the relationship between Battlestar Galactica and bears?\",\"kind\":\"text\"},{\"body\":\"Do sloths qualify as bears?\",\"kind\":\"text\"}],\"title\":\"About bears\"}\"'\"}\"\"]\"\"}
 """
 
 broken_survey = """
-{\"questions\":[{\"\":\"What type of bear is best?\",\"kind\":\"voice\"},{\"\":\"In a scale of 1 to 10, how cute do you find koalas?\",\"kind\":\"numeric\"},{\"body\":\"Do you think bears beat beets?\",\"kind\":\"yes-no\"},{\"body\":\"What's the relationship between Battlestar Galactica and bears?\",\"kind\":\"voice\"},{\"body\":\"Do sloths qualify as bears?\",\"kind\":\"voice\"}],\"title\":\"About bears\"}\"'\"}\"\"]\"\"}
+{\"questions\":[{\"\":\"What type of bear is best?\",\"kind\":\"text\"},{\"\":\"In a scale of 1 to 10, how cute do you find koalas?\",\"kind\":\"numeric\"},{\"body\":\"Do you think bears beat beets?\",\"kind\":\"yes-no\"},{\"body\":\"What's the relationship between Battlestar Galactica and bears?\",\"kind\":\"text\"},{\"body\":\"Do sloths qualify as bears?\",\"kind\":\"text\"}],\"title\":\"About bears\"}\"'\"}\"\"]\"\"}
 """
 
 

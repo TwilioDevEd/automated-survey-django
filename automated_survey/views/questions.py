@@ -16,19 +16,19 @@ def show_question(request, survey_id, question_id):
 
     question_store_url = reverse('record_response', kwargs=url_parameters)
 
-    voice_response = twiml.Response()
-    voice_response.say(question.body)
-    voice_response.say(instructions[question.kind])
-    voice_response = _attach_command_to_response(
-        voice_response, question.kind, question_store_url
+    text_response = twiml.Response()
+    text_response.say(question.body)
+    text_response.say(instructions[question.kind])
+    text_response = _attach_command_to_response(
+        text_response, question.kind, question_store_url
     )
 
-    return HttpResponse(voice_response, content_type='application/xml')
+    return HttpResponse(text_response, content_type='application/xml')
 
 
 def _attach_command_to_response(response, kind, action):
-    if kind == Question.VOICE:
-        response.record(action=action + '?Kind=voice', method='POST')
+    if kind == Question.TEXT:
+        response.record(action=action + '?Kind=text', method='POST')
     elif kind == Question.NUMERIC:
         response.gather(action=action + '?Kind=numeric', method='POST')
     elif kind == Question.YES_NO:
@@ -39,7 +39,7 @@ def _attach_command_to_response(response, kind, action):
     return response
 
 instructions = {
-    'voice': 'Please record your answer after the beep and then hit the pound sign',
+    'text': 'Please record your answer after the beep and then hit the pound sign',
     'yes-no': 'Please press the one key for yes and the zero key for no and then hit the pound sign',
     'numeric': 'Please press a number between 1 and 10 and then hit the pound sign'
 }

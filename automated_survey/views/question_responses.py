@@ -14,7 +14,7 @@ class QuestionResponseView(View):
     def post(self, request, survey_id, question_id):
         question_kind = request.GET.get('Kind')
         if question_kind not in [Question.YES_NO, Question.NUMERIC,
-                                 Question.VOICE]:
+                                 Question.TEXT]:
             raise NoSuchQuestionKindException
 
         new_response = self._question_response_from_request(request)
@@ -38,7 +38,7 @@ class QuestionResponseView(View):
     def _question_response_content(self, request, question_kind):
         if question_kind in [Question.YES_NO, Question.NUMERIC]:
             return request.POST['Digits']
-        elif question_kind == Question.VOICE:
+        elif question_kind == Question.TEXT:
             return request.POST['RecordingUrl']
         else:
             raise NoSuchQuestionKindException
@@ -68,13 +68,13 @@ class QuestionResponseView(View):
         return list(next_questions)[0]
 
     def _goodbye_message(self):
-        voice_response = twiml.Response()
-        voice_response.say('That was the last question')
-        voice_response.say('Thank you for taking this survey')
-        voice_response.say('Good-bye')
-        voice_response.hangup()
+        text_response = twiml.Response()
+        text_response.say('That was the last question')
+        text_response.say('Thank you for taking this survey')
+        text_response.say('Good-bye')
+        text_response.hangup()
 
-        return HttpResponse(voice_response)
+        return HttpResponse(text_response)
 
 
 class NoSuchQuestionKindException(Exception):
