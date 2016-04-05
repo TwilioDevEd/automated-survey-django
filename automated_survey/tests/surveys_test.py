@@ -12,10 +12,22 @@ class SurveyRedirectionTest(TestCase):
                                  kind=Question.TEXT, survey=self.survey)
         self.question.save()
 
-    def test_entry_point_redirection(self):
+    def test_default_entry_point_redirection(self):
         response = self.client.post(reverse('first_survey'))
         expected_url = reverse('survey', kwargs={'survey_id': self.survey.id})
 
+        assert expected_url in response.url
+
+    def test_redirects_to_response_recorder_due_session_variable(self):
+        session = self.client.session
+        session['answering_question_id'] = self.question.id
+        session.save()
+
+        response = self.client.post(reverse('first_survey'))
+
+        expected_url = reverse('record_response',
+                               kwargs={'survey_id': self.question.survey.id,
+                                       'question_id': self.question.id})
         assert expected_url in response.url
 
     def test_show_message_verb_on_sms(self):

@@ -56,3 +56,11 @@ class ShowQuestionTest(TestCase):
         assert '<Message' in text_response.content.decode('utf8')
         assert '<Record' not in text_response.content.decode('utf8')
         assert '<Say' not in text_response.content.decode('utf8')
+
+    def test_sms_creates_a_web_session(self):
+        sms_parameters = {'MessageSid': 'SMS123'}
+
+        self.client.get(reverse('question', kwargs=self.question_ids),
+                        sms_parameters)
+
+        assert self.client.session["answering_question_id"] == self.question.id

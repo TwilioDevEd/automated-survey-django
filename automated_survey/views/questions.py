@@ -13,6 +13,7 @@ def show_question(request, survey_id, question_id):
         twiml = sms_twiml_for_question(question)
     else:
         twiml = voice_twiml_for_question(question)
+    request.session['answering_question_id'] = question.id
     return HttpResponse(twiml, content_type='application/xml')
 
 

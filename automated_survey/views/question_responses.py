@@ -1,6 +1,5 @@
 from django.views.generic import View
 from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
 from django.http import HttpResponse
 from twilio import twiml
 
@@ -26,11 +25,9 @@ class QuestionResponseView(View):
                       'question_id': next_question.id}
         next_question_url = reverse('question', kwargs=parameters)
 
-        see_other = redirect(next_question_url)
-        see_other.status_code = 303
-        see_other.reason_phrase = 'See Other'
-
-        return see_other
+        twiml_response = twiml.Response()
+        twiml_response.redirect(next_question_url, method='GET')
+        return HttpResponse(twiml_response)
 
     def _goodbye_message(self):
         text_response = twiml.Response()

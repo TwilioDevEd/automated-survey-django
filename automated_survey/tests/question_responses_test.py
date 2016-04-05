@@ -68,8 +68,8 @@ class StoreQuestionResponseTest(TestCase):
 
         response = self.client.post(question_store_url_one, request_parameters)
 
-        assert response.status_code == 303
-        assert next_question_url in response.url
+        assert '<Redirect method="GET">' in response.content.decode('utf8')
+        assert next_question_url in response.content.decode('utf8')
 
     def test_validate_question_kind(self):
         invalid_question_store_url = reverse('record_response', kwargs=self.question_ids_one) + '?Kind=lol'
