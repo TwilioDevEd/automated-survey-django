@@ -19,7 +19,7 @@ class QuestionResponseView(View):
         return self._redirect_to_next_question(question)
 
     def _redirect_to_next_question(self, question):
-        next_question = self._next_question(question)
+        next_question = question.next()
         if not next_question:
             return self._goodbye_message()
 
@@ -32,14 +32,6 @@ class QuestionResponseView(View):
         see_other.reason_phrase = 'See Other'
 
         return see_other
-
-    def _next_question(self, question):
-        survey = Survey.objects.get(id=question.survey_id)
-
-        next_questions = \
-            survey.question_set.order_by('id').filter(id__gt=question.id)
-
-        return next_questions[0] if next_questions else None
 
     def _goodbye_message(self):
         text_response = twiml.Response()

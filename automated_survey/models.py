@@ -29,7 +29,7 @@ class Question(models.Model):
         if kind not in [cls.YES_NO, cls.NUMERIC, cls.TEXT]:
             raise ValidationError("Invalid question kind")
 
-    def _next_question(self):
+    def next(self):
         survey = Survey.objects.get(id=self.survey_id)
 
         next_questions = \
