@@ -52,7 +52,7 @@ def redirects_twilio_request_to_proper_endpoint(request):
                                kwargs={'survey_id': first_survey.id})
     else:
         question = Question.objects.get(id=answering_question)
-        redirect_url = reverse('record_response',
+        redirect_url = reverse('save_response',
                                kwargs={'survey_id': question.survey.id,
                                        'question_id': question.id})
     return HttpResponseRedirect(redirect_url)

@@ -18,14 +18,14 @@ class SurveyRedirectionTest(TestCase):
 
         assert expected_url in response.url
 
-    def test_redirects_to_response_recorder_due_session_variable(self):
+    def test_redirects_to_save_response_due_session_variable(self):
         session = self.client.session
         session['answering_question_id'] = self.question.id
         session.save()
 
         response = self.client.post(reverse('first_survey'))
 
-        expected_url = reverse('record_response',
+        expected_url = reverse('save_response',
                                kwargs={'survey_id': self.question.survey.id,
                                        'question_id': self.question.id})
         assert expected_url in response.url

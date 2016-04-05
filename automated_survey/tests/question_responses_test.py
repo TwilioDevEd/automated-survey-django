@@ -20,7 +20,7 @@ class StoreQuestionResponseTest(TestCase):
 
     def test_store_response_during_a_call(self):
         self.create_question(Question.TEXT)
-        question_store_url = reverse('record_response', kwargs=self.question_ids)
+        question_store_url = reverse('save_response', kwargs=self.question_ids)
 
         request_parameters = {
             'CallSid': 'somerandomuniqueid',
@@ -37,7 +37,7 @@ class StoreQuestionResponseTest(TestCase):
 
     def test_store_transcription_update(self):
         self.create_question(Question.TEXT)
-        question_store_url = reverse('record_response', kwargs=self.question_ids)
+        question_store_url = reverse('save_response', kwargs=self.question_ids)
 
         request_parameters = {
             'CallSid': 'somerandomuniqueid',
@@ -58,7 +58,7 @@ class StoreQuestionResponseTest(TestCase):
 
     def test_store_SMS_response(self):
         self.create_question(Question.TEXT)
-        question_store_url = reverse('record_response', kwargs=self.question_ids)
+        question_store_url = reverse('save_response', kwargs=self.question_ids)
 
         request_parameters = {
             'MessageSid': 'somerandomuniqueid',
@@ -80,7 +80,7 @@ class StoreQuestionResponseTest(TestCase):
         question_ids_two = {'survey_id': self.survey.id,
                             'question_id': question_two.id}
 
-        question_store_url_one = reverse('record_response', kwargs=self.question_ids)
+        question_store_url_one = reverse('save_response', kwargs=self.question_ids)
         next_question_url = reverse('question', kwargs=question_ids_two)
 
         request_parameters = {
@@ -96,7 +96,7 @@ class StoreQuestionResponseTest(TestCase):
 
     def test_validate_question_kind(self):
         self.create_question('invalid')
-        invalid_question_store_url = reverse('record_response', kwargs=self.question_ids)
+        invalid_question_store_url = reverse('save_response', kwargs=self.question_ids)
         request_parameters = {
             'CallSid': 'somerandomuniqueid',
             'From': '324238944',
@@ -107,7 +107,7 @@ class StoreQuestionResponseTest(TestCase):
 
     def test_last_question_during_a_call(self):
         self.create_question(Question.NUMERIC)
-        question_store_url_one = reverse('record_response', kwargs=self.question_ids)
+        question_store_url_one = reverse('save_response', kwargs=self.question_ids)
         request_parameters = {
             'CallSid': 'somerandomuniqueid',
             'From': '324238944',
@@ -123,7 +123,7 @@ class StoreQuestionResponseTest(TestCase):
 
     def test_last_question_over_sms(self):
         self.create_question(Question.NUMERIC)
-        question_store_url_one = reverse('record_response', kwargs=self.question_ids)
+        question_store_url_one = reverse('save_response', kwargs=self.question_ids)
         request_parameters = {
             'MessageSid': 'somerandomuniqueid',
             'From': '324238944',

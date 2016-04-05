@@ -8,10 +8,10 @@ from automated_survey.models import QuestionResponse, Question
 
 
 @require_POST
-def record_response(request, survey_id, question_id):
+def save_response(request, survey_id, question_id):
     question = Question.objects.get(id=question_id)
 
-    save_response(request, question)
+    save_response_from_request(request, question)
 
     next_question = question.next()
     if not next_question:
@@ -43,7 +43,7 @@ def goodbye(request):
     return HttpResponse(response)
 
 
-def save_response(request, question):
+def save_response_from_request(request, question):
     session_id = request.POST['MessageSid' if request.is_sms else 'CallSid']
     request_body = _extract_request_body(request, question.kind)
     phone_number = request.POST['From']
