@@ -9,6 +9,11 @@ class Survey(models.Model):
     def responses(self):
         return QuestionResponse.objects.filter(question__survey__id=self.id)
 
+    @property
+    def first_question(self):
+        return Question.objects.filter(survey__id=self.id
+                                       ).order_by('id').first()
+
     def __str__(self):
         return '%s' % self.title
 
