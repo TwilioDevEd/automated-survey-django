@@ -53,7 +53,8 @@ class QuestionResponse(models.Model):
                    phone_number=request.POST['From'],
                    response=cls._extract_content(request))
 
-    def _extract_content(request):
+    @classmethod
+    def _extract_content(cls, request):
         question_kind = request.GET.get('Kind')
         Question.validate_kind(question_kind)
         if question_kind in [Question.YES_NO, Question.NUMERIC]:
