@@ -1,6 +1,6 @@
 import os
 from django.core.management import BaseCommand
-from automated_survey.util.survey_loader import SurveyLoader
+from automated_survey.util import SurveyLoader
 
 root = os.path.abspath(os.path.dirname(__name__))
 

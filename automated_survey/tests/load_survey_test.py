@@ -1,7 +1,7 @@
 import pytest
 
 from automated_survey.models import Survey, Question
-from automated_survey.util.survey_loader import SurveyLoader
+from automated_survey.util import SurveyLoader
 from django.test import TestCase
 
 sample_survey = """
