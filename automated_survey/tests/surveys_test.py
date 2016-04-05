@@ -18,6 +18,14 @@ class SurveyRedirectionTest(TestCase):
 
         assert expected_url in response.url
 
+    def test_show_message_verb_on_sms(self):
+        response = self.client.get(reverse('survey',
+                                   kwargs={'survey_id': self.survey.id}),
+                                   {'MessageSid': '123'})
+
+        assert '<Message>' in response.content.decode('utf8')
+        assert '<Say>' not in response.content.decode('utf8')
+
     def test_show_survey(self):
         response = self.client.get(reverse('survey',
                                    kwargs={'survey_id': self.survey.id}))

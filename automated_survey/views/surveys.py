@@ -30,14 +30,16 @@ def show_survey(request, survey_id):
     }
 
     first_question_url = reverse('question', kwargs=first_question_ids)
-    text_response = twiml.Response()
 
-    text_response.say(
-        'Hello and thank you for taking the %s survey' %
-        survey.title)
-    text_response.redirect(first_question_url, method='GET')
+    welcome = 'Hello and thank you for taking the %s survey' % survey.title
+    twiml_response = twiml.Response()
+    if request.is_sms:
+        twiml_response.message(welcome)
+    else:
+        twiml_response.say(welcome)
+    twiml_response.redirect(first_question_url, method='GET')
 
-    return HttpResponse(text_response, content_type='application/xml')
+    return HttpResponse(twiml_response, content_type='application/xml')
 
 
 @require_POST
