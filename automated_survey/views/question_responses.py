@@ -4,8 +4,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from twilio import twiml
 
-from automated_survey.models import Survey, QuestionResponse, Question
-from automated_survey.views.common import parameters_for_survey_url
+from automated_survey.models import QuestionResponse, Question
 
 
 class QuestionResponseView(View):
@@ -23,9 +22,9 @@ class QuestionResponseView(View):
         if not next_question:
             return self._goodbye_message()
 
-        url_parameters = parameters_for_survey_url(
-            next_question.survey_id, next_question.id)
-        next_question_url = reverse('question', kwargs=url_parameters)
+        parameters = {'survey_id':   next_question.survey.id,
+                      'question_id': next_question.id}
+        next_question_url = reverse('question', kwargs=parameters)
 
         see_other = redirect(next_question_url)
         see_other.status_code = 303
