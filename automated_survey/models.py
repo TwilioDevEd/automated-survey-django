@@ -5,6 +5,10 @@ from django.core.exceptions import ValidationError
 class Survey(models.Model):
     title = models.CharField(max_length=255)
 
+    @property
+    def responses(self):
+        return QuestionResponse.objects.filter(question__survey__id=self.id)
+
     def __str__(self):
         return '%s' % self.title
 
@@ -63,3 +67,12 @@ class QuestionResponse(models.Model):
 
     def __str__(self):
         return '%s' % self.response
+
+    def as_dict(self):
+        return {
+                'body': self.question.body,
+                'kind': self.question.kind,
+                'response': self.response,
+                'call_sid': self.call_sid,
+                'phone_number': self.phone_number,
+                }

@@ -1,4 +1,4 @@
-from automated_survey.models import Survey, Question, QuestionResponse
+from automated_survey.models import Survey, Question
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
@@ -7,10 +7,9 @@ from twilio import twiml
 
 
 @require_GET
-def show_survey_results(request, survey_id):
-    responses = QuestionResponse.objects.filter(question__survey__id=survey_id)
+def show_survey_responses(request, survey_id):
     survey = Survey.objects.get(id=survey_id)
-    responses_to_render = list(map(lambda qr: _to_response(qr), responses))
+    responses_to_render = [response.as_dict() for response in survey.responses]
 
     template_context = {
         'responses': responses_to_render,
@@ -56,13 +55,3 @@ def redirect_to_first_results(request):
         'survey_results', kwargs={
             'survey_id': first_survey.id})
     return HttpResponseRedirect(results_for_first_survey)
-
-
-def _to_response(question_response):
-    return {
-        'body': question_response.question.body,
-        'kind': question_response.question.kind,
-        'response': question_response.response,
-        'call_sid': question_response.call_sid,
-        'phone_number': question_response.phone_number,
-    }
