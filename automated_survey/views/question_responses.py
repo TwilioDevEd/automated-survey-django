@@ -48,10 +48,17 @@ def save_response(request, question):
     request_body = _extract_request_body(request, question.kind)
     phone_number = request.POST['From']
 
-    QuestionResponse(call_sid=session_id,
-                     phone_number=phone_number,
-                     response=request_body,
-                     question=question).save()
+    response = QuestionResponse.objects.filter(question_id=question.id,
+                                               call_sid=session_id).first()
+
+    if not response:
+        QuestionResponse(call_sid=session_id,
+                         phone_number=phone_number,
+                         response=request_body,
+                         question=question).save()
+    else:
+        response.response = request_body
+        response.save()
 
 
 def _extract_request_body(request, question_kind):
@@ -61,6 +68,8 @@ def _extract_request_body(request, question_kind):
         key = 'Body'
     elif question_kind in [Question.YES_NO, Question.NUMERIC]:
         key = 'Digits'
+    elif 'TranscriptionText' in request.POST:
+        key = 'TranscriptionText'
     else:
         key = 'RecordingUrl'
 

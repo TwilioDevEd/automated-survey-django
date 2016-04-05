@@ -35,6 +35,27 @@ class StoreQuestionResponseTest(TestCase):
         assert new_response.phone_number == '324238944'
         assert new_response.response == 'gopher://recording.mp3'
 
+    def test_store_transcription_update(self):
+        self.create_question(Question.TEXT)
+        question_store_url = reverse('record_response', kwargs=self.question_ids)
+
+        request_parameters = {
+            'CallSid': 'somerandomuniqueid',
+            'From': '324238944',
+            'RecordingUrl': 'gopher://recording.mp3'
+        }
+
+        self.client.post(question_store_url, request_parameters)
+
+        request_parameters['TranscriptionText'] = 'Do you hear me?'
+        self.client.post(question_store_url, request_parameters)
+
+        new_response = QuestionResponse.objects.get(question_id=self.question.id)
+
+        assert new_response.call_sid == 'somerandomuniqueid'
+        assert new_response.phone_number == '324238944'
+        assert new_response.response == 'Do you hear me?'
+
     def test_store_SMS_response(self):
         self.create_question(Question.TEXT)
         question_store_url = reverse('record_response', kwargs=self.question_ids)
