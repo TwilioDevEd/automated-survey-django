@@ -5,7 +5,7 @@ from automated_survey.views.surveys import redirects_twilio_request_to_proper_en
 from automated_survey.views.surveys import redirect_to_first_results
 from automated_survey.views.questions import show_question
 from automated_survey.views.surveys import show_survey, show_survey_results
-from automated_survey.views.question_responses import QuestionResponseView
+from automated_survey.views.question_responses import record_response
 
 urlpatterns = [
     url(r'^$', redirect_to_first_results, name='app_root'),
@@ -27,6 +27,6 @@ urlpatterns = [
         name='survey_results'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)/question_response$',
-        csrf_exempt(QuestionResponseView.as_view()),
+        csrf_exempt(record_response),
         name='record_response')
 ]

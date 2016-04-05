@@ -53,8 +53,6 @@ CALL_INSTRUCTIONS = {
 
 
 def record_response_url(question):
-    url = reverse('record_response',
-                  kwargs={'survey_id': question.survey.id,
-                          'question_id': question.id})
-    url += '?Kind=%s' % question.kind
-    return url
+    return reverse('record_response',
+                   kwargs={'survey_id': question.survey.id,
+                           'question_id': question.id})

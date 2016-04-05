@@ -55,7 +55,6 @@ def redirects_twilio_request_to_proper_endpoint(request):
         redirect_url = reverse('record_response',
                                kwargs={'survey_id': question.survey.id,
                                        'question_id': question.id})
-        redirect_url += '?Kind=%s' % question.kind
     return HttpResponseRedirect(redirect_url)
 
 
