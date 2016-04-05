@@ -58,17 +58,27 @@ class QuestionResponse(models.Model):
 
     @classmethod
     def from_twilio_request(cls, request):
-        return cls(call_sid=request.POST['CallSid'],
+        if request.is_sms:
+            session_sid = request.POST['MessageSid']
+        else:
+            session_sid = request.POST['CallSid']
+        return cls(call_sid=session_sid,
                    phone_number=request.POST['From'],
-                   response=cls._extract_content(request))
+                   response=cls._extract_response(request))
 
     @classmethod
-    def _extract_content(cls, request):
+    def _extract_response(cls, request):
         question_kind = request.GET.get('Kind')
         Question.validate_kind(question_kind)
-        if question_kind in [Question.YES_NO, Question.NUMERIC]:
-            return request.POST['Digits']
-        return request.POST['RecordingUrl']
+
+        if request.is_sms:
+            key = 'Body'
+        elif question_kind in [Question.YES_NO, Question.NUMERIC]:
+            key = 'Digits'
+        else:
+            key = 'RecordingUrl'
+
+        return request.POST.get(key)
 
     def __str__(self):
         return '%s' % self.response

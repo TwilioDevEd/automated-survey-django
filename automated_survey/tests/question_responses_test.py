@@ -11,13 +11,15 @@ class StoreQuestionResponseTest(TestCase):
         self.survey = Survey(title='A testing survey')
         self.survey.save()
 
-        self.question_one = Question(body='Question one', kind=Question.TEXT, survey=self.survey)
+        self.question_one = Question(body='Question one', kind=Question.TEXT,
+                                     survey=self.survey)
         self.question_one.save()
         self.question_ids_one = {'survey_id': self.survey.id,
                                  'question_id': self.question_one.id}
 
-    def test_store_response(self):
-        question_store_url = reverse('record_response', kwargs=self.question_ids_one) + '?Kind=text'
+    def test_store_response_during_a_call(self):
+        question_store_url = reverse('record_response', kwargs=self.question_ids_one)
+        question_store_url += '?Kind=text'
 
         request_parameters = {
             'CallSid': 'somerandomuniqueid',
@@ -31,6 +33,23 @@ class StoreQuestionResponseTest(TestCase):
         assert new_response.call_sid == 'somerandomuniqueid'
         assert new_response.phone_number == '324238944'
         assert new_response.response == 'gopher://recording.mp3'
+
+    def test_store_SMS_response(self):
+        question_store_url = reverse('record_response', kwargs=self.question_ids_one)
+        question_store_url += '?Kind=text'
+
+        request_parameters = {
+            'MessageSid': 'somerandomuniqueid',
+            'From': '324238944',
+            'Body': 'I agree with you'
+        }
+
+        self.client.post(question_store_url, request_parameters)
+        new_response = QuestionResponse.objects.get(question_id=self.question_one.id)
+
+        assert new_response.call_sid == 'somerandomuniqueid'
+        assert new_response.phone_number == '324238944'
+        assert new_response.response == 'I agree with you'
 
     def test_store_response_and_redirect(self):
         question_two = Question(body='Question two', kind=Question.TEXT, survey=self.survey)
