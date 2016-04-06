@@ -27,6 +27,15 @@ class ShowQuestionTest(TestCase):
         assert '<Record' in text_response.content.decode('utf8')
         assert question_store_url in text_response.content.decode('utf8')
 
+    def test_transcription_is_enabled(self):
+        save_url = reverse('save_response', kwargs=self.question_ids)
+        expected_attribute = 'transcribeCallback="%s"' % (save_url)
+
+        text_response = self.client.get(reverse('question',
+                                                kwargs=self.question_ids))
+
+        assert expected_attribute in text_response.content.decode('utf8')
+
     def test_show_numeric_question_during_a_call(self):
         self.question.kind = Question.NUMERIC
         self.question.save()

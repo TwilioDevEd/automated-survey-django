@@ -17,10 +17,10 @@ def save_response(request, survey_id, question_id):
     if not next_question:
         return goodbye(request)
     else:
-        return redirect_over_twiml(next_question.id, survey_id)
+        return next_question_redirect(next_question.id, survey_id)
 
 
-def redirect_over_twiml(question_id, survey_id):
+def next_question_redirect(question_id, survey_id):
     parameters = {'survey_id': survey_id, 'question_id': question_id}
     question_url = reverse('question', kwargs=parameters)
 

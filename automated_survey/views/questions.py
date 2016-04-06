@@ -40,7 +40,10 @@ def voice_question(question):
 
     action = save_response_url(question)
     if question.kind == Question.TEXT:
-        twiml_response.record(action=action, method='POST')
+        kwargs = {'maxLength': 6,
+                  'transcribe': True,
+                  'transcribeCallback': action}
+        twiml_response.record(action=action, method='POST', **kwargs)
     else:
         twiml_response.gather(action=action, method='POST')
     return twiml_response
