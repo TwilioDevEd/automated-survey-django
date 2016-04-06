@@ -11,7 +11,7 @@ Use Twilio to conduct automated phone surveys.
 
 This project is preconfigured to run on [Heroku](https://www.heroku.com/). Deploy it now:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/TwilioDevEd/automated-survey-django)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/TwilioDevEd/automated-survey-django)
 
 To view your app, click the **...** menu in the top right corner and select **Open app**.
 
@@ -29,9 +29,9 @@ To run the app locally, first clone this repository and `cd` into its directory.
     - If on a Mac, I recommend
       [Postgres.app](http://postgresapp.com/). After install, run `createdb surveys;`
     - If Postgres is already installed locally, you can just run `createdb surveys` from a terminal
+1. Copy the `.env.example` file to `.env`, and edit it to match your database.
 1. Run the migrations with `python manage.py migrate`
 1. Optionally create a superuser so you can access the Django admin: `python manage.py createsuperuser`.
-1. Copy the `.env.example` file to `.env`, and edit it to match your database.
 1. Start the development server: `python manage.py runserver`
 
 ### Configure Twilio to call your webhooks
@@ -65,7 +65,7 @@ Mind the trailing slash.
 
 ## Run the tests
 
-Configure your test database in `.env.test`. You can then run the tests locally using `py.test`
+Configure your test database by editing `.env.test` file. You can then run the tests locally using `py.test`
 
 ```
 $ py.test --cov=automated_survey
