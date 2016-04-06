@@ -54,14 +54,18 @@ Next, edit the "Request URL" field under the "Voice" section and point
 it towards your ngrok-exposed application `/automated-survey/first-survey/` route. Set
 the HTTP method to POST. If you are trying the Heroku
 application you need to point Twilio to
-`http://<your-app-name>.herokuapp.com/automated-survey/first-survey/`. See the image
+`http://<your-app-name>.herokuapp.com/automated-survey/first-survey/`. 
+The same endpoint for Voice is being used for Messaging, so you can repeat this step on Messaging tab.
+
+See the images
 below for an example:
 
 You can then visit the application at [http://localhost:8000/](http://localhost:8000/).
 
 Mind the trailing slash.
 
-![Webhook configuration](https://raw.github.com/TwilioDevEd/automated-survey-django/master/images/webhook-conf.png)
+![Webhook Voice configuration](https://raw.github.com/TwilioDevEd/automated-survey-django/master/images/webhook-conf-voice.png)
+![Webhook SMS configuration](https://raw.github.com/TwilioDevEd/automated-survey-django/master/images/webhook-conf-sms.png)
 
 ## Run the tests
 
