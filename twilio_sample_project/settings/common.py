@@ -42,6 +42,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'automated_survey.middleware.SMSMiddleware',
 )
 
 ROOT_URLCONF = 'twilio_sample_project.urls'

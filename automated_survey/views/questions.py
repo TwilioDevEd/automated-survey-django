@@ -3,47 +3,59 @@ from twilio import twiml
 from django.http import HttpResponse
 
 from automated_survey.models import Question
-from automated_survey.views.common import parameters_for_survey_url
 from django.views.decorators.http import require_GET
 
 
 @require_GET
 def show_question(request, survey_id, question_id):
     question = Question.objects.get(id=question_id)
-
-    url_parameters = parameters_for_survey_url(question.survey.id,
-                                               question.id)
-
-    question_store_url = reverse('record_response', kwargs=url_parameters)
-
-    voice_response = twiml.Response()
-    voice_response.say(question.body)
-    voice_response.say(instructions[question.kind])
-    voice_response = _attach_command_to_response(
-        voice_response, question.kind, question_store_url
-    )
-
-    return HttpResponse(voice_response, content_type='application/xml')
-
-
-def _attach_command_to_response(response, kind, action):
-    if kind == Question.VOICE:
-        response.record(action=action + '?Kind=voice', method='POST')
-    elif kind == Question.NUMERIC:
-        response.gather(action=action + '?Kind=numeric', method='POST')
-    elif kind == Question.YES_NO:
-        response.gather(action=action + '?Kind=yes-no', method='POST')
+    if request.is_sms:
+        twiml = sms_question(question)
     else:
-        raise NoSuchVerbException('%s is not a supported question type' % kind)
+        twiml = voice_question(question)
+    request.session['answering_question_id'] = question.id
+    return HttpResponse(twiml, content_type='application/xml')
 
-    return response
 
-instructions = {
-    'voice': 'Please record your answer after the beep and then hit the pound sign',
-    'yes-no': 'Please press the one key for yes and the zero key for no and then hit the pound sign',
-    'numeric': 'Please press a number between 1 and 10 and then hit the pound sign'
+def sms_question(question):
+    twiml_response = twiml.Response()
+
+    twiml_response.message(question.body)
+    twiml_response.message(SMS_INSTRUCTIONS[question.kind])
+
+    return twiml_response
+
+SMS_INSTRUCTIONS = {
+    Question.TEXT: 'Please type your answer',
+    Question.YES_NO: 'Please type 1 for yes and 0 for no',
+    Question.NUMERIC: 'Please type a number between 1 and 10'
 }
 
 
-class NoSuchVerbException(Exception):
-    pass
+def voice_question(question):
+    twiml_response = twiml.Response()
+
+    twiml_response.say(question.body)
+    twiml_response.say(VOICE_INSTRUCTIONS[question.kind])
+
+    action = save_response_url(question)
+    if question.kind == Question.TEXT:
+        kwargs = {'maxLength': 6,
+                  'transcribe': True,
+                  'transcribeCallback': action}
+        twiml_response.record(action=action, method='POST', **kwargs)
+    else:
+        twiml_response.gather(action=action, method='POST')
+    return twiml_response
+
+VOICE_INSTRUCTIONS = {
+    Question.TEXT: 'Please record your answer after the beep and then hit the pound sign',
+    Question.YES_NO: 'Please press the one key for yes and the zero key for no and then hit the pound sign',
+    Question.NUMERIC: 'Please press a number between 1 and 10 and then hit the pound sign'
+}
+
+
+def save_response_url(question):
+    return reverse('save_response',
+                   kwargs={'survey_id': question.survey.id,
+                           'question_id': question.id})

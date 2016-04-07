@@ -1,80 +1,76 @@
-from django.views.generic import View
-from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from django.http import HttpResponse
 from twilio import twiml
 
-from automated_survey.models import Survey, QuestionResponse, Question
-from automated_survey.views.common import parameters_for_survey_url
+from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from django.views.decorators.http import require_POST
+
+from automated_survey.models import QuestionResponse, Question
 
 
-class QuestionResponseView(View):
-    http_method_names = ['post']
+@require_POST
+def save_response(request, survey_id, question_id):
+    question = Question.objects.get(id=question_id)
 
-    def post(self, request, survey_id, question_id):
-        question_kind = request.GET.get('Kind')
-        if question_kind not in ['yes-no', 'numeric', 'voice']:
-            raise NoSuchQuestionKindException
+    save_response_from_request(request, question)
 
-        new_response = self._question_response_from_request(request)
-        new_response.question_id = question_id
-        new_response.save()
-
-        return self._redirect_for_next_question(survey_id, question_id)
-
-    def _question_response_from_request(self, request):
-        question_kind = request.GET.get('Kind')
-        (call_sid, phone_number) = (request.POST['CallSid'],
-                                    request.POST['From'])
-
-        new_response = QuestionResponse(
-            call_sid=call_sid, phone_number=phone_number)
-        new_response.response = self._question_response_content(
-            request, question_kind)
-
-        return new_response
-
-    def _question_response_content(self, request, question_kind):
-        if question_kind in [Question.YES_NO, Question.NUMERIC]:
-            return request.POST['Digits']
-        elif question_kind == Question.VOICE:
-            return request.POST['RecordingUrl']
-        else:
-            raise NoSuchQuestionKindException
-
-    def _redirect_for_next_question(self, survey_id, question_id):
-        try:
-            next_question = self._next_question(survey_id, question_id)
-        except IndexError:
-            return self._goodbye_message()
-
-        url_parameters = parameters_for_survey_url(
-            next_question.survey_id, next_question.id)
-        next_question_url = reverse('question', kwargs=url_parameters)
-
-        see_other = redirect(next_question_url)
-        see_other.status_code = 303
-        see_other.reason_phrase = 'See Other'
-
-        return see_other
-
-    def _next_question(self, survey_id, question_id):
-        survey = Survey.objects.get(id=survey_id)
-
-        questions = survey.question_set.order_by('id')
-        next_questions = filter(lambda q: q.id > int(question_id), questions)
-
-        return list(next_questions)[0]
-
-    def _goodbye_message(self):
-        voice_response = twiml.Response()
-        voice_response.say('That was the last question')
-        voice_response.say('Thank you for taking this survey')
-        voice_response.say('Good-bye')
-        voice_response.hangup()
-
-        return HttpResponse(voice_response)
+    next_question = question.next()
+    if not next_question:
+        return goodbye(request)
+    else:
+        return next_question_redirect(next_question.id, survey_id)
 
 
-class NoSuchQuestionKindException(Exception):
-    pass
+def next_question_redirect(question_id, survey_id):
+    parameters = {'survey_id': survey_id, 'question_id': question_id}
+    question_url = reverse('question', kwargs=parameters)
+
+    twiml_response = twiml.Response()
+    twiml_response.redirect(question_url, method='GET')
+    return HttpResponse(twiml_response)
+
+
+def goodbye(request):
+    response = twiml.Response()
+    goodbye_messages = ['That was the last question',
+                        'Thank you for taking this survey',
+                        'Good-bye']
+    if request.is_sms:
+        [response.message(message) for message in goodbye_messages]
+    else:
+        [response.say(message) for message in goodbye_messages]
+        response.hangup()
+
+    return HttpResponse(response)
+
+
+def save_response_from_request(request, question):
+    session_id = request.POST['MessageSid' if request.is_sms else 'CallSid']
+    request_body = _extract_request_body(request, question.kind)
+    phone_number = request.POST['From']
+
+    response = QuestionResponse.objects.filter(question_id=question.id,
+                                               call_sid=session_id).first()
+
+    if not response:
+        QuestionResponse(call_sid=session_id,
+                         phone_number=phone_number,
+                         response=request_body,
+                         question=question).save()
+    else:
+        response.response = request_body
+        response.save()
+
+
+def _extract_request_body(request, question_kind):
+    Question.validate_kind(question_kind)
+
+    if request.is_sms:
+        key = 'Body'
+    elif question_kind in [Question.YES_NO, Question.NUMERIC]:
+        key = 'Digits'
+    elif 'TranscriptionText' in request.POST:
+        key = 'TranscriptionText'
+    else:
+        key = 'RecordingUrl'
+
+    return request.POST.get(key)

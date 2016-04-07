@@ -1,11 +1,11 @@
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.views.decorators.csrf import csrf_exempt
 
-from automated_survey.views.surveys import redirect_to_first_survey
+from automated_survey.views.surveys import redirects_twilio_request_to_proper_endpoint
 from automated_survey.views.surveys import redirect_to_first_results
 from automated_survey.views.questions import show_question
 from automated_survey.views.surveys import show_survey, show_survey_results
-from automated_survey.views.question_responses import QuestionResponseView
+from automated_survey.views.question_responses import save_response
 
 urlpatterns = [
     url(r'^$', redirect_to_first_results, name='app_root'),
@@ -19,7 +19,7 @@ urlpatterns = [
         name='survey'),
 
     url(r'^first-survey/',
-        csrf_exempt(redirect_to_first_survey),
+        csrf_exempt(redirects_twilio_request_to_proper_endpoint),
         name='first_survey'),
 
     url(r'^survey/(?P<survey_id>\d+)/results$',
@@ -27,6 +27,6 @@ urlpatterns = [
         name='survey_results'),
 
     url(r'^survey/(?P<survey_id>\d+)/question/(?P<question_id>\d+)/question_response$',
-        csrf_exempt(QuestionResponseView.as_view()),
-        name='record_response')
+        csrf_exempt(save_response),
+        name='save_response')
 ]
