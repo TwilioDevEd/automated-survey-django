@@ -21,7 +21,7 @@
          and prompt for text input with [`Message`](//www.twilio.com/docs/api/twiml/sms/message)
          if you are using SMS.
 
-      1. After each question, Twilio makes another request to your server with the user's input, which your application stores on its database.
+      1. After each question is made, Twilio makes another request to your server with the user's input. That input is stored on the application's database.
 
       1. After storing the answer, our server will instruct Twilio to [`Redirect`](//www.twilio.com/docs/api/twiml/redirect)
          the user to the next question or finish the survey.
@@ -32,12 +32,12 @@
       * [Getting started with Twilio Python](//www.twilio.com/docs/quickstart/python)
       * [TwiML: the Twilio Markup Language](//www.twilio.com/docs/api/twiml).
 
-  .step(data-tile='Create a Survey', data-file='automated_survey/util.py', data-highlight='5-16')
+  .step(data-tile='Creating a Survey', data-file='automated_survey/util.py', data-highlight='5-16')
     :markdown
       ## Creating a Survey
 
-      In order to perform automated surveys we first need to have some
-      questions to ask. For your convenience, the application's
+      In order to perform an automated survey we first need to have some
+      questions on it. For your convenience, the application's
       repository already includes one survey that can be loaded into
       the database. If the database is configured correctly this
       survey will be loaded into the database when the app starts.
@@ -49,7 +49,7 @@
       `$ python manage.py load_survey your_survey.json`
 
       We want users to take our survey, so next we will implement
-      the handler for SMS and calls.
+      the handler for SMS and for calls.
 
    .step(data-tile='The Interview Loop')
     :markdown
@@ -60,10 +60,10 @@
 
       ![Survey Flow Chart](//s3.amazonaws.com/howtodocs/flowchart.png)
 
-      The user can answer a question for your survey over the phone using either their phone's keypad or by speaking.
+      The user can answer a question for your survey over the phone using either their phone's keypad or by voice.
       After each interaction, Twilio will make an HTTP request to your web application with either the string of
       keys the user pressed or a URL to a recording of their voice input.
-      
+
       For SMS surveys the user will answer questions just by replying
       with another SMS to the Twilio number that sent the question.
 
@@ -81,7 +81,7 @@
       to send our web application an HTTP request when we get an incoming call or text.
 
       [Click on one of your numbers][numbers] and configure Voice and Message URLs that point to your server.
-      In our code, the routes is `/automated-survey/first-survey/` for both Voice and Message.
+      In our code, the route is `/automated-survey/first-survey/` for both Voice and Message.
 
       ![Configuring a Twilio Number For SMS](//raw.githubusercontent.com/TwilioDevEd/automated-survey-django/master/images/webhook-conf-sms.png)
       ![Configuring a Twilio Number For Voice](//raw.githubusercontent.com/TwilioDevEd/automated-survey-django/master/images/webhook-conf-voice.png)
@@ -97,11 +97,11 @@
       Right after receiving a call or an SMS, Twilio will send a request to the URL specified on the number's configuration
       (`/automated-survey/first-survey/`).
 
-      The first endpoint will check if user is already answering to a question or not. If not, it means this is the first
+      The first endpoint will check if the user has already answered a question or not. If not, it means this is the first
       request, so we need to welcome the user and redirect him to the first question. This is done on `show_survey`
-      which will use `Say` verb for calls and `Message` verb for SMS.
+      which will use the `Say` verb for calls and the `Message` verb for SMS.
 
-      The `is_sms` property comes from a simple middleware that checks if request has Voice or Message data. [See it here][middleware]
+      The `is_sms` property comes from a simple middleware that checks if request has Voice or Message data. [More information here][middleware]
 
       It will also include a `Redirect` verb to the question's endpoint to continue with the survey flow.
 
@@ -166,14 +166,18 @@
     :markdown
       ## Handling responses.
 
-      After the user has finished speaking and pressing keys, Twilio just sends a request telling what happened and asking for further instructions.
+      After the user has finished submitting his/her answers, Twilio just sends a request telling what happened and asking for further instructions.
 
       At this point, we need to recover data from Twilio's request parameters (`_extract_request_body` does that) and store them on `save_response_from_request` function.
 
       Recovered parameters vary according to what we asked on the questions, they can be:
+
       * `Body` contains the text message from answer over SMS.
+
       * `Digits` contains the keys pressed for a numeric question.
+
       * `RecodingUrl` contains the URL for listening a recorded message.
+
       * `TranscriptionText` contains the result of a recording transcription.
 
       Finally we redirect to our Question controller, which will ask the next question on the loop.
@@ -195,7 +199,7 @@
       For this route we simply query the database for answers using Django ORM
       and then display the information within a template. We
       display a panel for every question on the last survey, and
-      inside every panel we list the responses from different calls.
+      inside every panel we list the responses from the different calls.
 
       You can access this page in the applications root route `/`.
 
