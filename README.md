@@ -76,3 +76,8 @@ Configure your test database by editing `.env.test` file. You can then run the t
 $ py.test --cov=automated_survey
 ```
 
+## Meta
+
+* No warranty expressed or implied. Software is as is. Diggity.
+* [MIT License](http://www.opensource.org/licenses/mit-license.html)
+* Lovingly crafted by Twilio Developer Education.
