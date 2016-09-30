@@ -77,7 +77,7 @@ The same endpoint for Voice is being used for Messaging, so you can repeat this 
 Configure your test database by editing `.env.test` file. You can then run the tests locally using `py.test`
 
 ```
-$ py.test --cov=automated_survey
+$ py.test automated_survey/tests/ --cov=automated_survey
 ```
 
 ## Meta
