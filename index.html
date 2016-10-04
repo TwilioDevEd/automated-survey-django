@@ -25,7 +25,7 @@ to <a href="//www.twilio.com/docs/api/twiml/gather"><code>Gather</code></a> or
 and prompt for text input with <a href="//www.twilio.com/docs/api/twiml/sms/message"><code>Message</code></a>
 if you are using SMS.</p>
 </li>
-<li><p>After each question, Twilio makes another request to your server with the user&#39;s input, which your application stores on its database.</p>
+<li><p>After each question is made, Twilio makes another request to your server with the user&#39;s input. That input is stored on the application&#39;s database.</p>
 </li>
 <li><p>After storing the answer, our server will instruct Twilio to <a href="//www.twilio.com/docs/api/twiml/redirect"><code>Redirect</code></a>
 the user to the next question or finish the survey.</p>
@@ -38,9 +38,9 @@ the user to the next question or finish the survey.</p>
 <li><a href="//www.twilio.com/docs/quickstart/python">Getting started with Twilio Python</a></li>
 <li><a href="//www.twilio.com/docs/api/twiml">TwiML: the Twilio Markup Language</a>.</li>
 </ul>
-</div><div data-tile="Create a Survey" data-file="automated_survey/util.py" data-highlight="5-16" class="step"><h2 id="creating-a-survey">Creating a Survey</h2>
-<p>In order to perform automated surveys we first need to have some
-questions to ask. For your convenience, the application&#39;s
+</div><div data-tile="Creating a Survey" data-file="automated_survey/util.py" data-highlight="5-16" class="step"><h2 id="creating-a-survey">Creating a Survey</h2>
+<p>In order to perform an automated survey we first need to have some
+questions on it. For your convenience, the application&#39;s
 repository already includes one survey that can be loaded into
 the database. If the database is configured correctly this
 survey will be loaded into the database when the app starts.</p>
@@ -49,12 +49,12 @@ survey will be loaded into the database when the app starts.</p>
 file located in the root of the repository and re-running the app&#39;s <code>load_survey</code> command.</p>
 <p><code>$ python manage.py load_survey your_survey.json</code></p>
 <p>We want users to take our survey, so next we will implement
-the handler for SMS and calls.</p>
+the handler for SMS and for calls.</p>
 </div><div data-tile="The Interview Loop" class="step"><h2 id="the-interview-loop">The Interview Loop</h2>
 <p>It is helpful to visualize your interaction with a user during a survey as a loop.
 The chart below shows how that interaction will be handled. (click to enlarge):</p>
 <p><img src="//s3.amazonaws.com/howtodocs/flowchart.png" alt="Survey Flow Chart"></p>
-<p>The user can answer a question for your survey over the phone using either their phone&#39;s keypad or by speaking.
+<p>The user can answer a question for your survey over the phone using either their phone&#39;s keypad or by voice.
 After each interaction, Twilio will make an HTTP request to your web application with either the string of
 keys the user pressed or a URL to a recording of their voice input.</p>
 <p>For SMS surveys the user will answer questions just by replying
@@ -65,16 +65,16 @@ with another SMS to the Twilio number that sent the question.</p>
 <p>To initiate the interview process, we need to configure one of our <a href="//www.twilio.com/user/account/phone-numbers/incoming">Twilio numbers</a>
 to send our web application an HTTP request when we get an incoming call or text.</p>
 <p><a href="//www.twilio.com/user/account/phone-numbers/incoming">Click on one of your numbers</a> and configure Voice and Message URLs that point to your server.
-In our code, the routes is <code>/automated-survey/first-survey/</code> for both Voice and Message.</p>
+In our code, the route is <code>/automated-survey/first-survey/</code> for both Voice and Message.</p>
 <p><img src="//raw.githubusercontent.com/TwilioDevEd/automated-survey-django/master/images/webhook-conf-sms.png" alt="Configuring a Twilio Number For SMS">
 <img src="//raw.githubusercontent.com/TwilioDevEd/automated-survey-django/master/images/webhook-conf-voice.png" alt="Configuring a Twilio Number For Voice"></p>
 </div><div data-file="automated_survey/views/surveys.py" data-title="Responding To A Twilio Request" data-highlight="24-58" class="step"><h2 id="responding-to-a-twilio-request">Responding to a Twilio Request</h2>
 <p>Right after receiving a call or an SMS, Twilio will send a request to the URL specified on the number&#39;s configuration
 (<code>/automated-survey/first-survey/</code>).</p>
-<p>The first endpoint will check if user is already answering to a question or not. If not, it means this is the first
+<p>The first endpoint will check if the user has already answered a question or not. If not, it means this is the first
 request, so we need to welcome the user and redirect him to the first question. This is done on <code>show_survey</code>
-which will use <code>Say</code> verb for calls and <code>Message</code> verb for SMS.</p>
-<p>The <code>is_sms</code> property comes from a simple middleware that checks if request has Voice or Message data. <a href="//github.com/TwilioDevEd/automated-survey-django/blob/master/automated_survey/middleware.py">See it here</a></p>
+which will use the <code>Say</code> verb for calls and the <code>Message</code> verb for SMS.</p>
+<p>The <code>is_sms</code> property comes from a simple middleware that checks if request has Voice or Message data. <a href="//github.com/TwilioDevEd/automated-survey-django/blob/master/automated_survey/middleware.py">More information here</a></p>
 <p>It will also include a <code>Redirect</code> verb to the question&#39;s endpoint to continue with the survey flow.</p>
 <hr>
 <p><strong>See Also:</strong></p>
@@ -116,14 +116,18 @@ Twilio will process the record and extract useful text, making a request to our 
 <li><a href="//www.twilio.com/docs/api/twiml/record">TwiML Voice: &lt;Record&gt;</a></li>
 </ul>
 </div><div data-file="automated_survey/views/question_responses.py" data-highlight="10-76" class="step"><h2 id="handling-responses-">Handling responses.</h2>
-<p>After the user has finished speaking and pressing keys, Twilio just sends a request telling what happened and asking for further instructions.</p>
+<p>After the user has finished submitting his/her answers, Twilio just sends a request telling what happened and asking for further instructions.</p>
 <p>At this point, we need to recover data from Twilio&#39;s request parameters (<code>_extract_request_body</code> does that) and store them on <code>save_response_from_request</code> function.</p>
 <p>Recovered parameters vary according to what we asked on the questions, they can be:</p>
 <ul>
-<li><code>Body</code> contains the text message from answer over SMS.</li>
-<li><code>Digits</code> contains the keys pressed for a numeric question.</li>
-<li><code>RecodingUrl</code> contains the URL for listening a recorded message.</li>
-<li><code>TranscriptionText</code> contains the result of a recording transcription.</li>
+<li><p><code>Body</code> contains the text message from answer over SMS.</p>
+</li>
+<li><p><code>Digits</code> contains the keys pressed for a numeric question.</p>
+</li>
+<li><p><code>RecodingUrl</code> contains the URL for listening a recorded message.</p>
+</li>
+<li><p><code>TranscriptionText</code> contains the result of a recording transcription.</p>
+</li>
 </ul>
 <p>Finally we redirect to our Question controller, which will ask the next question on the loop.
 This is done on <code>next_question_redirect</code> function.</p>
@@ -138,7 +142,7 @@ This is done on <code>next_question_redirect</code> function.</p>
 <p>For this route we simply query the database for answers using Django ORM
 and then display the information within a template. We
 display a panel for every question on the last survey, and
-inside every panel we list the responses from different calls.</p>
+inside every panel we list the responses from the different calls.</p>
 <p>You can access this page in the applications root route <code>/</code>.</p>
 </div><div class="step"><h2 id="where-to-next-">Where to next?</h2>
 <p>That&#39;s it!</p>
