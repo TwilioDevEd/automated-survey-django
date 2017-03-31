@@ -29,7 +29,7 @@ class ShowQuestionTest(TestCase):
 
     def test_transcription_is_enabled(self):
         save_url = reverse('save_response', kwargs=self.question_ids)
-        expected_attribute = 'transcribeCallback="%s"' % (save_url)
+        expected_attribute = 'transcribecallback="%s"' % (save_url)
 
         text_response = self.client.get(reverse('question',
                                                 kwargs=self.question_ids))

@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
-from twilio import twiml
+from twilio.twiml.messaging_response import MessagingResponse
+from twilio.twiml.voice_response import VoiceResponse
 from django.http import HttpResponse
 
 from automated_survey.models import Question
@@ -13,12 +14,13 @@ def show_question(request, survey_id, question_id):
         twiml = sms_question(question)
     else:
         twiml = voice_question(question)
+
     request.session['answering_question_id'] = question.id
     return HttpResponse(twiml, content_type='application/xml')
 
 
 def sms_question(question):
-    twiml_response = twiml.Response()
+    twiml_response = MessagingResponse()
 
     twiml_response.message(question.body)
     twiml_response.message(SMS_INSTRUCTIONS[question.kind])
@@ -33,7 +35,7 @@ SMS_INSTRUCTIONS = {
 
 
 def voice_question(question):
-    twiml_response = twiml.Response()
+    twiml_response = VoiceResponse()
 
     twiml_response.say(question.body)
     twiml_response.say(VOICE_INSTRUCTIONS[question.kind])

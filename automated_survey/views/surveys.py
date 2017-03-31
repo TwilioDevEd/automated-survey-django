@@ -4,7 +4,8 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.csrf import csrf_exempt
-from twilio import twiml
+from twilio.twiml.voice_response import VoiceResponse
+from twilio.twiml.messaging_response import MessagingResponse
 
 
 @require_GET
@@ -33,12 +34,14 @@ def show_survey(request, survey_id):
     first_question_url = reverse('question', kwargs=first_question_ids)
 
     welcome = 'Hello and thank you for taking the %s survey' % survey.title
-    twiml_response = twiml.Response()
     if request.is_sms:
+        twiml_response = MessagingResponse()
         twiml_response.message(welcome)
+        twiml_response.redirect(url=first_question_url, method='GET')
     else:
+        twiml_response = VoiceResponse()
         twiml_response.say(welcome)
-    twiml_response.redirect(first_question_url, method='GET')
+        twiml_response.redirect(first_question_url, method='GET')
 
     return HttpResponse(twiml_response, content_type='application/xml')
 
