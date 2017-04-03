@@ -1,4 +1,5 @@
-from twilio import twiml
+from twilio.twiml.messaging_response import MessagingResponse
+from twilio.twiml.voice_response import VoiceResponse
 
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
@@ -24,19 +25,20 @@ def next_question_redirect(question_id, survey_id):
     parameters = {'survey_id': survey_id, 'question_id': question_id}
     question_url = reverse('question', kwargs=parameters)
 
-    twiml_response = twiml.Response()
-    twiml_response.redirect(question_url, method='GET')
+    twiml_response = MessagingResponse()
+    twiml_response.redirect(url=question_url, method='GET')
     return HttpResponse(twiml_response)
 
 
 def goodbye(request):
-    response = twiml.Response()
     goodbye_messages = ['That was the last question',
                         'Thank you for taking this survey',
                         'Good-bye']
     if request.is_sms:
+        response = MessagingResponse()
         [response.message(message) for message in goodbye_messages]
     else:
+        response = VoiceResponse()
         [response.say(message) for message in goodbye_messages]
         response.hangup()
 

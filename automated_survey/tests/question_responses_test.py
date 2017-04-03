@@ -91,7 +91,7 @@ class StoreQuestionResponseTest(TestCase):
 
         response = self.client.post(question_store_url_one, request_parameters)
 
-        assert '<Redirect method="GET">' in response.content.decode('utf8')
+        assert '<Redirect method="GET"' in response.content.decode('utf8')
         assert next_question_url in response.content.decode('utf8')
 
     def test_validate_question_kind(self):
