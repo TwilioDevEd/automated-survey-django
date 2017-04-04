@@ -37,7 +37,7 @@ def show_survey(request, survey_id):
     if request.is_sms:
         twiml_response = MessagingResponse()
         twiml_response.message(welcome)
-        twiml_response.redirect(url=first_question_url, method='GET')
+        twiml_response.redirect(first_question_url, method='GET')
     else:
         twiml_response = VoiceResponse()
         twiml_response.say(welcome)
