@@ -7,14 +7,6 @@ Use Twilio to conduct automated phone surveys.
 
 ## Quickstart
 
-### Heroku
-
-This project is preconfigured to run on [Heroku](https://www.heroku.com/). Deploy it now:
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/TwilioDevEd/automated-survey-django)
-
-To view your app, click the **...** menu in the top right corner and select **Open app**.
-
 ### Local development
 
 This project is built using the [Django](https://www.djangoproject.com/) web framework. It runs on Python 2.7+ and Python 3.4+.
@@ -57,9 +49,9 @@ and open a number's configuration by clicking on it. ![Open a number's configura
 
 Next, edit the "Request URL" field under the "Voice" section and point
 it towards your ngrok-exposed application `/automated-survey/first-survey/` route. Set
-the HTTP method to POST. If you are trying the Heroku
-application you need to point Twilio to
-`http://<your-app-name>.herokuapp.com/automated-survey/first-survey/`.
+the HTTP method to POST. If you are running the application
+in production somewhere, you need to point Twilio to
+`http://<your-app-name>.com/automated-survey/first-survey/`.
 
 See the images below as an example on how to do it:
 
