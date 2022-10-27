@@ -16,3 +16,4 @@ twilio==6.9.0
 virtualenv==13.0.3
 wheel==0.24.0
 whitenoise==2.0.3
+pyjwt>=2.4.0 # not directly required, pinned by Snyk to avoid a vulnerability
