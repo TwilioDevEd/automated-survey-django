@@ -14,5 +14,5 @@ six==1.9.0
 stevedore==1.6.0
 twilio==6.9.0
 virtualenv==13.0.3
-wheel==0.24.0
+wheel==0.38.4
 whitenoise==2.0.3
