@@ -9,7 +9,7 @@ py==1.4.30
 pytest==2.7.2
 pytest-cov==2.0.0
 pytest-django==2.8.0
-pytz==2015.4
+pytz==2022.7
 six==1.9.0
 stevedore==1.6.0
 twilio==6.9.0
